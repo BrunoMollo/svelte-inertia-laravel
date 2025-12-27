@@ -192,9 +192,9 @@
                         >
                             Important:
                         </span>
-                        These recovery codes will only be shown once. Store them
-                        in a secure password manager immediately. They can be used
-                        to recover access to your account if your two factor authentication
+                        These recovery codes will only be shown once. Store them in
+                        a secure password manager immediately. They can be used to
+                        recover access to your account if your two factor authentication
                         device is lost.
                     </div>
 

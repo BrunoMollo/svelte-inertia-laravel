@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Public/Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -18,7 +18,7 @@ Route::get('/', function () {
 Route::middleware('auth', 'verified')->group(function () {
     // Dashboard
     Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
+        return Inertia::render('Admin/Dashboard');
     })->name('dashboard');
 
     // Profile
@@ -30,4 +30,4 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/account/security', [SecurityController::class, 'show'])->name('security.show');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

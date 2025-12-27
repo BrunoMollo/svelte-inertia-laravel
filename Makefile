@@ -13,3 +13,6 @@ down:
 bash:
 	docker exec -ti laravel-dev bash
 
+logs:
+	docker exec -ti laravel-dev tail -f /app/storage/logs/laravel.log
+

@@ -2,7 +2,43 @@
 
 A modern, full-stack web application boilerplate built with Laravel 12, Inertia.js, Svelte 5 (with Runes), TypeScript, Tailwind CSS 4, and Shadcn UI components — powered by Vite 7 for a fast DX.
 
-![Starter Screenshots](https://github.com/user-attachments/assets/0e06b0b9-36bb-4e0d-acb7-b192dbde299d)
+## Getting Started
+
+### Prerequisites
+
+- PHP 8.x
+- Composer
+- Docker
+- Make
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/BrunoMollo/svelte-inertia-laravel && cd svelte-inertia-laravel
+```
+
+2. Install PHP dependencies and generate key:
+
+```bash
+cp .env.example .env
+composer install
+php artisan key:generate
+```
+
+
+3. Start the development servers:
+```bash
+make up
+```
+
+4. Migrate the database:
+```bash
+make migrate
+```
+
+Visit `http://localhost:8000` to view the application.
 
 ## Features
 
@@ -49,57 +85,6 @@ This project implements a modern monolithic architecture using Laravel as the ba
 - **Frontend-Backend communication**
     - Inertia.js for seamless frontend-backend communication
 
-## Getting Started
-
-### Prerequisites
-
-- PHP 8.x
-- Composer
-- Node.js (Latest LTS version)
-- SQLite (but you can use any other RDBMS)
-- Laravel Herd (to run the application)
-
-### Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/ferjal0/svelte-inertia-laravel
-cd svelte-inertia-laravel
-```
-
-2. Install PHP dependencies:
-
-```bash
-composer install
-```
-
-3. Install Node.js dependencies:
-
-```bash
-pnpm install
-```
-
-4. Set up your environment:
-
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-5. Configure your database in `.env` and run migrations:
-
-```bash
-php artisan migrate
-```
-
-6. Start the development servers:
-
-```bash
-pnpm run dev
-```
-
-Visit `http://svelte-inertia-laravel.test` to see your application.
 
 ## Tailwind CSS 4 + Vite 7
 

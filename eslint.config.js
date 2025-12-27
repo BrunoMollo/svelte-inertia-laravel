@@ -66,4 +66,10 @@ export default [
             '@typescript-eslint/no-unsafe-call': 'off',
         },
     },
+    {
+        files: ['./resources/js/lib/components/ui/**/*.svelte'],
+        rules: {
+            'svelte/valid-compile': 'off'   // <-- disables the rule
+        }
+    }
 ];

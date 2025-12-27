@@ -10,11 +10,13 @@
         token: string;
     };
 
-    const { token }: Props = $props();
+    const { token = $bindable() }: Props = $props();
+
+    const initialToken = token;
 
     const form = useForm({
         _method: 'POST',
-        token,
+        token: initialToken,
         email: new URLSearchParams(window.location.search).get('email') || '',
         password: '',
         password_confirmation: '',

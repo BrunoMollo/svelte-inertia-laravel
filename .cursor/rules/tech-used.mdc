@@ -1,0 +1,27 @@
+
+---
+description: Technolgies available for this project
+globs:
+alwaysApply: true
+---
+
+# Tech Used
+
+This aplication has been created with the folloeing technologies:
+- pnpm (please never use npm, always use pnpm to run commands and install packages)
+- svelte 5 (please avoid using stores, use runes only, see `.cursor/rules/svelte-5.mdc`)
+- Laravel 12
+- Inertia.js 2 (remeber that you have available the latest features of inetria.js, like infinite scroll and defered props)
+- tailwindcss (avoid using plain css unless is the only way to do something)
+- schadcn-svelte
+- lucile-icons
+- bash (you can can create scripts inside the `./scripts` folder)
+
+
+What technologies you are NOT using ❌:
+- react ❌
+- vue ❌
+- npm ❌
+- blame templates directly ❌
+DONT USE THEM ❌
+

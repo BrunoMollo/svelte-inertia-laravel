@@ -1,0 +1,23 @@
+---
+description: How to create and modify a Laravel Model
+globs:
+alwaysApply: true
+---
+
+
+# Migrations and factories
+- A when creating a new model, you should create a migration and a factory (use the `php artisan make:model -mf` command)
+- You shoud always keep the factories up to date with the migrations. If a model is change, the factory should be changed too.
+
+
+# Naming & Structure
+- Use singular, StudlyCase names (User, InvoiceItem).
+- Match table name only when deviating from Laravel conventions.
+- Keep models thin; extract logic when the file grows large
+
+# Boolean columns
+- Try to avoid boolean columns, in many cases they are an over simplification that
+hides information. For example, a `is_active` column is better represented as a `acticated_at` column.
+- you can create methods to simplify the logic of the column to a boolean result.
+
+

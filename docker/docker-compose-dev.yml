@@ -7,9 +7,23 @@ services:
     ports:
       - '${APP_PORT}:8000'
       - '5173:5173'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - net
-
+    develop:
+      watch:
+       - action: sync
+         path: ..
+         target: /app
+  mailpit:
+    image: axllent/mailpit
+    container_name: ${MAIL_HOST}
+    restart: unless-stopped
+    ports:
+      - '${MAILPIT_UI_PORT}:8025' # Web UI
+    networks:
+      - net
 networks:
     net:
 

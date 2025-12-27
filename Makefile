@@ -5,7 +5,7 @@ include $(env)
 export $(shell sed 's/=.*//' $(env))
 
 up:
-	docker compose  -f ./docker/docker-compose-dev.yml --env-file $(env) up
+	docker compose  -f ./docker/docker-compose-dev.yml --env-file $(env) watch
 
 down:
 	docker compose -f ./docker/docker-compose-dev.yml down

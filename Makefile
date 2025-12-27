@@ -5,10 +5,10 @@ include $(env)
 export $(shell sed 's/=.*//' $(env))
 
 up:
-	docker compose  -f ./docker/docker-compose-dev.yml --env-file $(env) watch
+	docker compose --env-file $(env) watch
 
 down:
-	docker compose -f ./docker/docker-compose-dev.yml down
+	docker compose down
 
 bash:
 	docker exec -ti laravel-dev bash

@@ -14,6 +14,7 @@
     "scripts": {
         "build": "vite build && vite build --ssr",
         "dev": "vite",
+        "dev:both": "concurrently --names 'LARAVEL,INERTIA' --prefix-colors 'blue,red' 'php artisan serve' 'pnpm dev' ",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",

@@ -13,8 +13,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build && vite build --ssr",
-        "dev": "vite",
-        "dev:both": "concurrently --names 'LARAVEL,INERTIA' --prefix-colors 'blue,red' 'php artisan serve' 'pnpm dev' ",
+        "dev:f": "vite --host=0.0.0.0",
+        "dev:b": "php artisan serve --host=0.0.0.0",
+        "dev:both": "concurrently --names 'LARAVEL,INERTIA' --prefix-colors 'blue,red' 'pnpm dev:b' 'pnpm dev:f' ",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",

@@ -1,0 +1,49 @@
+# =========================
+# VCS
+# =========================
+.git
+.gitignore
+
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+
+# =========================
+# Node / Frontend
+# =========================
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# =========================
+# PHP / Laravel
+# =========================
+vendor
+storage/*.log
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
+
+# =========================
+# Env / Secrets
+# =========================
+.env.*
+!.env.example
+
+# =========================
+# Tests / Coverage
+# =========================
+coverage
+.phpunit.result.cache
+
+# =========================
+# Docker
+# =========================
+docker-compose.yml
+docker/

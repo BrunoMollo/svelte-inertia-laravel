@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Account\ProfileController;
 use App\Http\Controllers\Account\SecurityController;
+use App\Http\Controllers\Account\SessionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,6 +29,10 @@ Route::middleware('auth', 'verified')->group(function () {
 
     // Security
     Route::get('/account/security', [SecurityController::class, 'show'])->name('security.show');
+
+    // Sessions
+    Route::delete('/account/sessions/other-browser-sessions', [SessionController::class, 'destroyOtherSessions'])->name('session.destroyOtherSessions');
+    Route::delete('/account/sessions/browser-sessions/{id}', [SessionController::class, 'destroySession'])->name('session.destroySession');
 });
 
 require __DIR__ . '/auth.php';

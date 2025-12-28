@@ -12,8 +12,14 @@
 */
 
 pest()->extend(Tests\TestCase::class)
+    ->beforeEach(function () {
+        $this->withoutVite();
+    })
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
+
+
+
 
 /*
 |--------------------------------------------------------------------------

@@ -15,6 +15,12 @@ pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
 
+
+
+pest()->beforeEach(function () {
+    $this->withoutVite();
+});
+
 /*
 |--------------------------------------------------------------------------
 | Expectations

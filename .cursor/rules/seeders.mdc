@@ -1,0 +1,57 @@
+---
+description: How to maintain the seeders when adding new features
+globs:
+alwaysApply: true
+---
+
+## Cursor Rule: *Exhaustive and Representative Laravel Seeders*
+
+**Principle**
+Laravel database seeders **must exhaustively represent all meaningful domain states**, even with a small number of records. The goal is not volume, but **full coverage of the state space**.
+
+**Rule**
+When creating or modifying database seeders:
+
+1. Seeders **must include at least one record for every relevant state, role, or meaningful combination** an entity can have.
+2. Any new feature that **expands the possible states of the data model** requires:
+
+   * Reviewing existing seeders.
+   * Adding new records that explicitly represent the new states or combinations.
+3. No valid model state should exist **only in theory or in production** — all must be visible in the development environment.
+
+**Examples**
+
+* If a `User` can be:
+
+  * `admin`
+  * `superadmin`
+    → The seeder must create **at least one user of each role**.
+* If a `blocked_at` flag is introduced:
+
+  * active user
+  * blocked user
+    → The seeder must explicitly include **a blocked user**.
+* If states or flags can be combined (e.g. `admin + blocked`), evaluate whether the combination is valid and, if so, **represent it in the seeder**.
+
+**Goal**
+The development environment should:
+
+* Expose **all the ways data can appear**.
+* Surface permission, logic, and UI bugs **before production**.
+* Prevent implicit assumptions like *“this never happens”*.
+
+**Pre-merge Mental Checklist**
+
+* Did this feature introduce a new state, flag, or role?
+* Is that state represented in the seeders?
+* Can a new developer see this case by simply running `db:seed`?
+
+> ❗ If a state exists in code but not in seeders, **the seeder is incomplete**.
+
+---
+
+If you want, I can:
+
+* Condense this into a **one-paragraph Cursor guardrail**
+* Turn it into a **PR checklist**
+* Or adapt it to **factory-based seeders** (Laravel-style best practice)

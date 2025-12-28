@@ -10,7 +10,7 @@
     }
 
     let { projects } = $props<{ projects: Project[] }>();
-    let activeProject = $state(projects[0]);
+    let activeProject = $derived(projects[0]);
     let { isMobile } = Sidebar.useSidebar();
 </script>
 

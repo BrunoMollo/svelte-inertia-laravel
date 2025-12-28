@@ -23,8 +23,6 @@ git clone https://github.com/BrunoMollo/svelte-inertia-laravel && cd svelte-iner
 
 ```bash
 cp .env.example .env
-composer install
-php artisan key:generate
 ```
 
 

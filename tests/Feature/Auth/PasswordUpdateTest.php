@@ -39,7 +39,6 @@ test('user cannot update password with incorrect current password', function () 
     $response->assertStatus(422)->assertJsonValidationErrors('current_password');
 });
 
-
 test('new password must be confirmed', function () {
     /** @var \Pest\TestCase $this */
     $user = User::factory()->create();
@@ -59,7 +58,6 @@ test('new password must be confirmed', function () {
 
 test('new password must be at least 8 characters', function () {
     /** @var \Pest\TestCase $this */
-
     $user = User::factory()->create();
 
     $response = $this
@@ -71,7 +69,6 @@ test('new password must be at least 8 characters', function () {
             'password' => 'short',
             'password_confirmation' => 'short',
         ]);
-
 
     $response->assertStatus(422)->assertJsonValidationErrors('password');
 });

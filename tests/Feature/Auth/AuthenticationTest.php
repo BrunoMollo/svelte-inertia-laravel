@@ -2,7 +2,6 @@
 
 use App\Models\User;
 
-
 test('login screen can be rendered', function () {
     /** @var \Pest\TestCase $this */
     $this->get('/login')->assertStatus(200);

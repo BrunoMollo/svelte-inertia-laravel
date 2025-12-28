@@ -2,7 +2,6 @@
 
 use App\Models\User;
 
-
 test('password can be confirmed', function () {
     /** @var \Pest\TestCase $this */
     $user = User::factory()->create();

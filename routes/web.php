@@ -35,4 +35,4 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::delete('/account/sessions/browser-sessions/{id}', [SessionController::class, 'destroySession'])->name('session.destroySession');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

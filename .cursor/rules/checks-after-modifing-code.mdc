@@ -1,0 +1,70 @@
+---
+description: Define the checks that must be done after modifying the code
+globs:
+alwaysApply: true
+---
+
+# Cursor Rule: Project Validation Commands
+
+## Intent
+
+Ensure that any change made to the codebase is validated against formatting, linting, style, and automated tests before being considered complete.
+
+## Rule
+
+Before marking a task, fix, refactor, or feature as **done**, the agent **must** run the following commands locally and ensure they complete **without errors**:
+
+```bash
+./vendor/bin/pint
+php artisan test
+pnpm format
+pnpm lint:fix
+pnpm build
+```
+
+## Expectations
+
+* All commands must exit with status code `0`
+* No skipped steps
+* No manual justification for skipping a command is allowed
+* If any command fails, the agent must:
+
+  1. Fix the reported issues
+  2. Re-run **all** commands from the top
+  3. Repeat until all commands pass
+
+## Scope
+
+This rule applies to:
+
+* Backend (Laravel, PHP)
+* Frontend (JS/TS, Svelte/Inertia)
+* Shared configs and tooling
+* Database changes (migrations, seeders, factories)
+
+## Rationale
+
+* `./vendor/bin/pint` → enforces Laravel/PHP code style
+* `php artisan test` → guarantees functional correctness and data consistency
+* `pnpm format` → ensures consistent formatting
+* `pnpm lint:fix` → enforces linting rules and auto-fixes
+* `pnpm build` → ensures the frontend builts correctly
+
+## Definition of Done
+
+A task is considered **complete** only if **all four commands pass successfully** in a clean working tree.
+
+
+## Wait until the last moment to check
+
+While editing the code is normal that this test fail, wait until the last second to check, but don't finish a task without checking.
+Don not over abuse this checks, I don't want to waste time spaming them.
+
+## Skip if the task minor
+If the task is really small (ej: a small style fix) and it is not relevant to the codebase, skip the check.
+But if it a full feature, it is better to check it.
+
+
+
+
+

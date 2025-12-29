@@ -17,6 +17,19 @@
     } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
     import { debounce } from '$lib/utils';
+    import {
+        createSvelteTable,
+        FlexRender,
+        renderComponent,
+        renderSnippet,
+    } from '$lib/components/ui/data-table';
+    import {
+        createColumnHelper,
+        getCoreRowModel,
+        type ColumnDef,
+    } from '@tanstack/table-core';
+    import * as Table from '$lib/components/ui/table';
+    import { createRawSnippet } from 'svelte';
 
     type Role = {
         id: number;
@@ -162,6 +175,43 @@
         return user.roles?.[0]?.name ?? 'N/A';
     }
 
+    // Column definitions for DataTable
+    const columnHelper = createColumnHelper<User>();
+
+    const columns = [
+        columnHelper.accessor('name', {
+            header: 'Name',
+        }),
+        columnHelper.accessor('email', {
+            header: 'Email',
+        }),
+        columnHelper.display({
+            id: 'role',
+            header: 'Role',
+        }),
+        columnHelper.display({
+            id: 'status',
+            header: 'Status',
+        }),
+        columnHelper.display({
+            id: 'created_at',
+            header: 'Created',
+        }),
+        columnHelper.display({
+            id: 'actions',
+            header: 'Actions',
+        }),
+    ];
+
+    // Create table - recreate when data changes to ensure reactivity
+    const table = $derived.by(() => {
+        return createSvelteTable({
+            data: users.data,
+            columns,
+            getCoreRowModel: getCoreRowModel(),
+        });
+    });
+
     function buildQueryParams(page?: number): string {
         const params = new URLSearchParams();
 
@@ -187,8 +237,10 @@
         );
     }
 
+    const DEBOUNCE_DELAY = 120;
+
     // Debounced filter application for text inputs
-    const debouncedApplyFilters = debounce(applyFilters, 120);
+    const debouncedApplyFilters = debounce(applyFilters, DEBOUNCE_DELAY);
 
     function handleNameChange(value: string) {
         filterName = value;
@@ -457,117 +509,168 @@
 
         <div class="rounded-lg border bg-card">
             <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b">
-                            <th class="px-6 py-3 text-left text-sm font-medium"
-                                >Name</th
-                            >
-                            <th class="px-6 py-3 text-left text-sm font-medium"
-                                >Email</th
-                            >
-                            <th class="px-6 py-3 text-left text-sm font-medium"
-                                >Role</th
-                            >
-                            <th class="px-6 py-3 text-left text-sm font-medium"
-                                >Status</th
-                            >
-                            <th class="px-6 py-3 text-left text-sm font-medium"
-                                >Created</th
-                            >
-                            <th class="px-6 py-3 text-right text-sm font-medium"
-                                >Actions</th
-                            >
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each users.data as user (user.id)}
-                            <tr class="border-b hover:bg-muted/50">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        <Users
-                                            class="h-4 w-4 text-muted-foreground"
-                                        />
-                                        <span class="font-medium"
-                                            >{user.name}</span
-                                        >
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-sm">{user.email}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span
-                                        class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                <Table.Root>
+                    <Table.Header>
+                        {#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
+                            <Table.Row>
+                                {#each headerGroup.headers as header (header.id)}
+                                    <Table.Head
+                                        class={header.id === 'actions'
+                                            ? 'text-right'
+                                            : ''}
+                                        colspan={header.colSpan}
                                     >
-                                        {getUserRole(user)}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    {#if user.disabled_at}
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-200"
-                                        >
-                                            Disabled
-                                        </span>
-                                    {:else}
-                                        <span
-                                            class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200"
-                                        >
-                                            Active
-                                        </span>
-                                    {/if}
-                                </td>
-                                <td
-                                    class="px-6 py-4 text-sm text-muted-foreground"
-                                >
-                                    {formatDate(user.created_at)}
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div
-                                        class="flex items-center justify-end gap-2"
-                                    >
-                                        {#if user.disabled_at}
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onclick={() => enableUser(user)}
-                                            >
-                                                <Unlock class="h-4 w-4" />
-                                            </Button>
-                                        {:else}
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onclick={() =>
-                                                    disableUser(user)}
-                                            >
-                                                <Lock class="h-4 w-4" />
-                                            </Button>
+                                        {#if !header.isPlaceholder}
+                                            <FlexRender
+                                                content={header.column.columnDef
+                                                    .header}
+                                                context={header.getContext()}
+                                            />
                                         {/if}
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onclick={() =>
-                                                forcePasswordReset(user)}
-                                        >
-                                            <KeyRound class="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        {:else}
-                            <tr>
-                                <td
-                                    colspan="6"
-                                    class="px-6 py-8 text-center text-muted-foreground"
+                                    </Table.Head>
+                                {/each}
+                            </Table.Row>
+                        {/each}
+                    </Table.Header>
+                    <Table.Body>
+                        {#if table.getRowModel().rows.length === 0}
+                            <Table.Row>
+                                <Table.Cell
+                                    colspan={columns.length}
+                                    class="h-24 text-center"
                                 >
                                     No users found
-                                </td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                                </Table.Cell>
+                            </Table.Row>
+                        {:else}
+                            {#each table.getRowModel().rows as row (row.id)}
+                                <Table.Row>
+                                    {#each row.getVisibleCells() as cell (cell.id)}
+                                        <Table.Cell
+                                            class={[
+                                                cell.column.id === 'actions'
+                                                    ? 'text-right'
+                                                    : '',
+                                                cell.column.id === 'email' ||
+                                                cell.column.id === 'created_at'
+                                                    ? 'text-sm'
+                                                    : '',
+                                                cell.column.id === 'created_at'
+                                                    ? 'text-muted-foreground'
+                                                    : '',
+                                            ]
+                                                .filter(Boolean)
+                                                .join(' ')}
+                                        >
+                                            {#if cell.column.id === 'name'}
+                                                <div
+                                                    class="flex items-center gap-2"
+                                                >
+                                                    <Users
+                                                        class="h-4 w-4 text-muted-foreground"
+                                                    />
+                                                    <span class="font-medium"
+                                                        >{cell.row.original
+                                                            .name}</span
+                                                    >
+                                                </div>
+                                            {:else if cell.column.id === 'email'}
+                                                <span class="text-sm"
+                                                    >{cell.row.original
+                                                        .email}</span
+                                                >
+                                            {:else if cell.column.id === 'role'}
+                                                <span
+                                                    class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                                                >
+                                                    {getUserRole(
+                                                        cell.row.original,
+                                                    )}
+                                                </span>
+                                            {:else if cell.column.id === 'status'}
+                                                {#if cell.row.original.disabled_at}
+                                                    <span
+                                                        class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900 dark:text-red-200"
+                                                    >
+                                                        Disabled
+                                                    </span>
+                                                {:else}
+                                                    <span
+                                                        class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-200"
+                                                    >
+                                                        Active
+                                                    </span>
+                                                {/if}
+                                            {:else if cell.column.id === 'created_at'}
+                                                <span
+                                                    class="text-sm text-muted-foreground"
+                                                >
+                                                    {formatDate(
+                                                        cell.row.original
+                                                            .created_at,
+                                                    )}
+                                                </span>
+                                            {:else if cell.column.id === 'actions'}
+                                                <div
+                                                    class="flex items-center justify-end gap-2"
+                                                >
+                                                    {#if cell.row.original.disabled_at}
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onclick={() =>
+                                                                enableUser(
+                                                                    cell.row
+                                                                        .original,
+                                                                )}
+                                                        >
+                                                            <Unlock
+                                                                class="h-4 w-4"
+                                                            />
+                                                        </Button>
+                                                    {:else}
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onclick={() =>
+                                                                disableUser(
+                                                                    cell.row
+                                                                        .original,
+                                                                )}
+                                                        >
+                                                            <Lock
+                                                                class="h-4 w-4"
+                                                            />
+                                                        </Button>
+                                                    {/if}
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onclick={() =>
+                                                            forcePasswordReset(
+                                                                cell.row
+                                                                    .original,
+                                                            )}
+                                                    >
+                                                        <KeyRound
+                                                            class="h-4 w-4"
+                                                        />
+                                                    </Button>
+                                                </div>
+                                            {:else}
+                                                <FlexRender
+                                                    content={cell.column
+                                                        .columnDef.cell}
+                                                    context={cell.getContext()}
+                                                />
+                                            {/if}
+                                        </Table.Cell>
+                                    {/each}
+                                </Table.Row>
+                            {/each}
+                        {/if}
+                    </Table.Body>
+                </Table.Root>
             </div>
 
             <div

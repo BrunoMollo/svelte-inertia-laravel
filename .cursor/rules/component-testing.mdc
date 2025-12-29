@@ -1,0 +1,180 @@
+---
+description: Testing standards for component identification and navigation validation using Pest
+globs: ["**/*.{svelte,php}", "tests/**/*.php"]
+alwaysApply: true
+---
+
+# Component Testing
+
+This project uses specific standards for testing components and validating navigation.
+
+## Using data-testid for Component Identification
+
+All interactive components and important UI elements **must** use `data-testid` attributes to enable reliable testing. This ensures tests remain stable even when CSS classes or DOM structure changes.
+
+### Svelte Components
+
+Add `data-testid` attributes to components that need to be tested:
+
+```svelte
+<!-- Good: Using data-testid -->
+<button data-testid="submit-button" onclick={handleSubmit}>
+  Submit
+</button>
+
+<form data-testid="login-form">
+  <input data-testid="email-input" type="email" bind:value={email} />
+  <input data-testid="password-input" type="password" bind:value={password} />
+</form>
+
+<!-- Bad: Using only CSS classes or IDs -->
+<button class="btn-primary" id="submit-btn" onclick={handleSubmit}>
+  Submit
+</button>
+```
+
+### Naming Convention
+
+Use kebab-case for `data-testid` values, following a descriptive pattern:
+
+- `{component-name}-{element-type}` for common elements
+- `{feature}-{action}` for interactive elements
+- `{page}-{section}` for page sections
+
+Examples:
+- `login-form`
+- `submit-button`
+- `user-profile-card`
+- `dashboard-sidebar`
+- `navigation-menu`
+
+## Testing Component Rendering with Pest
+
+Use **Pest PHP** to validate that components render correctly when navigating to routes. Tests should verify both the HTTP response and the presence of expected components in the rendered HTML.
+
+### Basic Component Rendering Test
+
+```php
+test('dashboard page renders expected components', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->get('/dashboard');
+
+    $response->assertOk();
+    $response->assertSee('data-testid="dashboard-container"', false);
+    $response->assertSee('data-testid="user-profile-card"', false);
+});
+```
+
+### Navigation Flow Testing
+
+Test complete navigation flows to ensure components render as expected:
+
+```php
+test('user can navigate to profile and see profile components', function () {
+    $user = User::factory()->create();
+
+    // Navigate to dashboard
+    $response = $this
+        ->actingAs($user)
+        ->get('/dashboard');
+    
+    $response->assertOk();
+    $response->assertSee('data-testid="dashboard-container"', false);
+
+    // Navigate to profile
+    $response = $this
+        ->actingAs($user)
+        ->get('/account/profile');
+    
+    $response->assertOk();
+    $response->assertSee('data-testid="profile-form"', false);
+    $response->assertSee('data-testid="profile-name-input"', false);
+    $response->assertSee('data-testid="profile-email-input"', false);
+});
+```
+
+### Testing Component Interactions
+
+When testing form submissions or interactions, verify that components are present before and after actions:
+
+```php
+test('profile form submission updates user data', function () {
+    $user = User::factory()->create();
+
+    // Verify form is rendered
+    $response = $this
+        ->actingAs($user)
+        ->get('/account/profile');
+    
+    $response->assertOk();
+    $response->assertSee('data-testid="profile-form"', false);
+
+    // Submit form
+    $response = $this
+        ->actingAs($user)
+        ->patch('/account/profile', [
+            'name' => 'Updated Name',
+            'email' => 'updated@example.com',
+        ]);
+
+    $response->assertRedirect('/account/profile');
+    
+    // Verify updated data is displayed
+    $response = $this
+        ->actingAs($user->fresh())
+        ->get('/account/profile');
+    
+    $response->assertSee('Updated Name', false);
+    $response->assertSee('data-testid="profile-form"', false);
+});
+```
+
+### Testing Conditional Component Rendering
+
+Test that components render conditionally based on user state or permissions:
+
+```php
+test('admin dashboard shows admin components', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('superadmin');
+
+    $response = $this
+        ->actingAs($admin)
+        ->get('/dashboard');
+
+    $response->assertOk();
+    $response->assertSee('data-testid="admin-panel"', false);
+    $response->assertSee('data-testid="admin-settings"', false);
+});
+
+test('regular user dashboard does not show admin components', function () {
+    $user = User::factory()->create();
+    $user->assignRole('student');
+
+    $response = $this
+        ->actingAs($user)
+        ->get('/dashboard');
+
+    $response->assertOk();
+    $response->assertDontSee('data-testid="admin-panel"', false);
+});
+```
+
+## Best Practices
+
+1. **Always use `data-testid`** for elements that need to be tested
+2. **Test navigation flows**, not just individual pages
+3. **Verify component presence** before testing interactions
+4. **Use descriptive test names** that explain what is being tested
+5. **Group related assertions** in the same test when testing a single user flow
+6. **Use `assertSee()` with `false` parameter** to check for raw HTML attributes (like `data-testid`)
+
+## What NOT to Do ❌
+
+- ❌ Don't rely solely on CSS classes or IDs for testing
+- ❌ Don't test implementation details, test user-facing behavior
+- ❌ Don't skip testing navigation flows
+- ❌ Don't use browser-based testing tools when Pest can handle it

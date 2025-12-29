@@ -1,5 +1,6 @@
 import { createInertiaApp, type ResolvedComponent } from '@inertiajs/svelte';
 import createServer from '@inertiajs/svelte/server';
+import { render } from 'svelte/server';
 import type { RouteName } from 'ziggy-js';
 import { route } from '../../vendor/tightenco/ziggy';
 
@@ -23,7 +24,7 @@ createServer((page) =>
                     location: new URL(page.props.ziggy.location),
                 });
 
-            return new App({ target: el!, props });
+            return render(App, { props });
         },
     }),
 );

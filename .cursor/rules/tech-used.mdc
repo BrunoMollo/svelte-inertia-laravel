@@ -1,27 +1,87 @@
-
 ---
-description: Technolgies available for this project
+description: Technologies available for this project
 globs:
 alwaysApply: true
 ---
 
-# Tech Used
+# Technologies Used
 
-This aplication has been created with the folloeing technologies:
-- pnpm (please never use npm, always use pnpm to run commands and install packages)
-- svelte 5 (please avoid using stores, use runes only, see `.cursor/rules/svelte-5.mdc`)
-- Laravel 12
-- Inertia.js 2 (remeber that you have available the latest features of inetria.js, like infinite scroll and defered props)
-- tailwindcss (avoid using plain css unless is the only way to do something)
-- schadcn-svelte
-- lucile-icons
-- bash (you can can create scripts inside the `./scripts` folder)
+This application has been created with the following technologies:
 
+## Package Manager
+- **pnpm** (⚠️ **NEVER use npm**, always use pnpm to run commands and install packages)
 
-What technologies you are NOT using ❌:
-- react ❌
-- vue ❌
-- npm ❌
-- blame templates directly ❌
-DONT USE THEM ❌
+## Backend (PHP/Laravel)
+- **PHP** ^8.4
+- **Laravel Framework** ^12
+- **Laravel Fortify** ^1.25 (Authentication)
+- **Laravel Sanctum** ^4.0 (API Authentication)
+- **Spatie Laravel Permission** ^6.24 (Roles & Permissions)
+- **Inertia.js Laravel** ^2.0 (Server-side adapter)
+- **Tightenco Ziggy** ^2.0 (Route helpers for JavaScript)
+- **Jenssegers Agent** ^2.6 (User agent detection)
+- **Railsware Mailtrap PHP** ^2.0 (Email testing)
+- **Symfony HTTP Client** ^7.2
+- **Nyholm PSR7** ^1.8
 
+## Frontend (JavaScript/TypeScript)
+- **Svelte** ^5.45.10 (⚠️ Use Svelte 5 runes, avoid stores - see `.cursor/rules/svelte-5.mdc`)
+- **TypeScript** ^5.9.3
+- **Inertia.js Svelte** ^2.3.1 (⚠️ Remember you have access to latest Inertia.js features like infinite scroll and deferred props)
+- **Vite** ^7.2.7 (Build tool)
+- **Axios** ^1.13.2 (HTTP client)
+
+## UI & Styling
+- **Tailwind CSS** ^4.1.18 (⚠️ Avoid using plain CSS unless it's the only way to do something)
+- **Tailwind Forms** ^0.5.10
+- **Tailwind Merge** ^3.4.0
+- **Tailwind Variants** ^3.2.2
+- **Bits UI** ^2.14.4 (Headless UI components)
+- **shadcn-svelte** (Component library)
+- **Lucide Svelte** ^0.544.0 (Icons)
+- **Svelte Sonner** ^1.0.7 (Toast notifications)
+- **TW Animate CSS** ^1.4.0
+- **CLSX** ^2.1.1 (Conditional class names)
+- **Internationalized Date** ^3.10.0
+- **Mode Watcher** ^1.1.0 (Theme/dark mode)
+
+## Development Tools
+- **ESLint** ^9.39.1 (Linting)
+- **ESLint Config Prettier** ^9.1.2
+- **ESLint Plugin Prettier** ^5.5.4
+- **ESLint Plugin Svelte** ^2.46.1
+- **TypeScript ESLint** ^8.49.0
+- **Prettier** ^3.7.4 (Code formatting)
+- **Prettier Plugin Svelte** ^3.4.0
+- **Prettier Plugin Tailwind CSS** ^0.7.2
+- **Prettier Plugin Organize Imports** ^4.3.0
+- **Svelte Check** ^4.3.4 (Type checking)
+- **Svelte ESLint Parser** ^0.43.0
+- **Concurrently** ^9.2.1 (Run multiple commands)
+- **PostCSS** ^8.5.6
+- **Laravel Vite Plugin** ^2.0.1
+
+## Testing & Quality
+- **Pest PHP** ^3.7 (Testing framework)
+- **Pest Plugin Laravel** ^3.0
+- **Laravel Pint** ^1.13 (PHP code style)
+- **Faker PHP** ^1.23 (Test data generation)
+- **Mockery** ^1.6 (Mocking framework)
+- **Nunomaduro Collision** ^8.1 (Error handler)
+
+## Development Environment
+- **Laravel Sail** ^1.26 (Docker environment)
+- **Laravel Pail** ^1.1 (Log viewer)
+- **Laravel Breeze** ^2.3 (Dev scaffolding)
+- **Laravel Tinker** ^2.9 (REPL)
+
+## Scripts & Automation
+- **Bash** (You can create scripts inside the `./scripts` folder)
+
+## What Technologies You Are NOT Using ❌
+- **React** ❌
+- **Vue** ❌
+- **npm** ❌ (Use pnpm instead)
+- **Blade templates directly** ❌ (Use Inertia.js with Svelte)
+
+**DO NOT USE THEM** ❌

@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ChangeUserPasswordRequest;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Models\User;
+use App\Notifications\PasswordChangedByAdmin;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -82,6 +82,7 @@ class UserController extends Controller
     public function disable(Request $request, User $user): RedirectResponse
     {
         $user->disable();
+        $user->save();
 
         return redirect($request->header('Referer') ?? route('admin.users.index'))
             ->with('success', 'User disabled successfully.');
@@ -99,20 +100,19 @@ class UserController extends Controller
     }
 
     /**
-     * Force password reset for the specified user.
+     * Change password for the specified user.
      */
-    public function forcePasswordReset(Request $request, User $user): RedirectResponse
+    public function changePassword(ChangeUserPasswordRequest $request, User $user): RedirectResponse
     {
-        // Generate a random password and set it
-        $randomPassword = Str::random(32);
         $user->forceFill([
-            'password' => Hash::make($randomPassword),
+            'password' => Hash::make($request->string('password')),
         ])->save();
 
-        // Send password reset notification
-        Password::sendResetLink(['email' => $user->email]);
+        $user->notify(new PasswordChangedByAdmin(
+            adminUser: $request->user(),
+        ));
 
         return redirect($request->header('Referer') ?? route('admin.users.index'))
-            ->with('success', 'Password reset email sent successfully.');
+            ->with('success', 'Password updated successfully.');
     }
 }

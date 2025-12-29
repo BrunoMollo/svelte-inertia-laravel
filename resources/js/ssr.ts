@@ -14,7 +14,7 @@ createServer((page) =>
             );
             return pages[`./Pages/${name}.svelte`];
         },
-        setup: ({ el, App, props }) => {
+        setup: ({ App, props }) => {
             // @ts-expect-error - Ziggy types
             global.route = (name: RouteName, params?, absolute?) =>
                 route(name, params, absolute, {

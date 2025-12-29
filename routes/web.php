@@ -39,7 +39,7 @@ Route::middleware('auth', 'verified')->group(function () {
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
         Route::post('/users/{user}/disable', [UserController::class, 'disable'])->name('admin.users.disable');
         Route::post('/users/{user}/enable', [UserController::class, 'enable'])->name('admin.users.enable');
-        Route::post('/users/{user}/force-password-reset', [UserController::class, 'forcePasswordReset'])->name('admin.users.force-password-reset');
+        Route::post('/users/{user}/change-password', [UserController::class, 'changePassword'])->name('admin.users.change-password');
     });
 
     // Profile

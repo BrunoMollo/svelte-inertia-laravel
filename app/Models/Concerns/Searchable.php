@@ -24,9 +24,9 @@ trait Searchable
         return $query->where(function ($q) use ($searchTerm, $searchableColumns) {
             foreach ($searchableColumns as $index => $column) {
                 if ($index === 0) {
-                    $q->where($column, 'like', '%' . $searchTerm . '%');
+                    $q->where($column, 'like', '%'.$searchTerm.'%');
                 } else {
-                    $q->orWhere($column, 'like', '%' . $searchTerm . '%');
+                    $q->orWhere($column, 'like', '%'.$searchTerm.'%');
                 }
             }
         });

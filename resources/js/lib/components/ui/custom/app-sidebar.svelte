@@ -12,7 +12,7 @@
     import NavUser from '$lib/components/ui/custom/nav-user.svelte';
     import * as Sidebar from '$lib/components/ui/sidebar';
     import ProjectSwitcher from './project-switcher.svelte';
-    import { router, page } from '@inertiajs/svelte';
+    import { page } from '@inertiajs/svelte';
     import type { PageProps } from '$lib/types';
 
     type Project = {

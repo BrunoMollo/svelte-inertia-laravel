@@ -5,7 +5,9 @@
     import { Label } from '$lib/components/ui/label';
     import ErrorFeedback from '$lib/components/ui/custom/error-feedback.svelte';
     import * as Dialog from '$lib/components/ui/dialog';
+    import * as AlertDialog from '$lib/components/ui/alert-dialog';
     import { Link, useForm, router, page } from '@inertiajs/svelte';
+    import { onDestroy, onMount } from 'svelte';
     import {
         Plus,
         Users,
@@ -20,16 +22,9 @@
     import {
         createSvelteTable,
         FlexRender,
-        renderComponent,
-        renderSnippet,
     } from '$lib/components/ui/data-table';
-    import {
-        createColumnHelper,
-        getCoreRowModel,
-        type ColumnDef,
-    } from '@tanstack/table-core';
+    import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
     import * as Table from '$lib/components/ui/table';
-    import { createRawSnippet } from 'svelte';
 
     type Role = {
         id: number;
@@ -75,6 +70,10 @@
     let perPage = $state(getFilterValue('per_page') || '25');
 
     let createDialogOpen = $state(false);
+    let changePasswordDialogOpen = $state(false);
+    let changePasswordConfirmOpen = $state(false);
+    let selectedUserForPasswordChange = $state<User | null>(null);
+    let selectedUserIdForPasswordChange = $state<number | null>(null);
 
     const form = useForm({
         name: '',
@@ -83,6 +82,42 @@
         password_confirmation: '',
         role: 'teacher' as 'teacher' | 'student',
     });
+
+    const changePasswordForm = useForm({
+        password: '',
+        password_confirmation: '',
+    });
+
+    function getCurrentUrlSearchParams(): URLSearchParams {
+        const url = new URL($page.url, 'http://localhost');
+        return new URLSearchParams(url.search);
+    }
+
+    function replaceBrowserUrlSearchParams(params: URLSearchParams) {
+        if (typeof window === 'undefined') return;
+
+        const query = params.toString();
+        const nextUrl =
+            window.location.pathname +
+            (query ? `?${query}` : '') +
+            window.location.hash;
+        window.history.replaceState({}, '', nextUrl);
+    }
+
+    function setChangePasswordUserQueryParam(userId: number | null) {
+        const params =
+            typeof window === 'undefined'
+                ? getCurrentUrlSearchParams()
+                : new URLSearchParams(window.location.search);
+
+        if (userId === null) {
+            params.delete('change_password_user');
+        } else {
+            params.set('change_password_user', String(userId));
+        }
+
+        replaceBrowserUrlSearchParams(params);
+    }
 
     function submitCreateUser(e: SubmitEvent) {
         e.preventDefault();
@@ -141,27 +176,47 @@
         );
     }
 
-    function forcePasswordReset(user: User) {
-        if (
-            confirm(
-                `Are you sure you want to force password reset for ${user.name}?`,
-            )
-        ) {
-            router.post(
-                `/admin/users/${user.id}/force-password-reset`,
-                {},
-                {
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        toast.success('Password reset email sent successfully');
-                    },
-                    onError: () => {
-                        toast.error('Failed to send password reset email');
-                    },
-                },
-            );
-        }
+    function openChangePasswordDialog(user: User) {
+        selectedUserForPasswordChange = user;
+        selectedUserIdForPasswordChange = user.id;
+        changePasswordDialogOpen = true;
+        changePasswordConfirmOpen = false;
+        $changePasswordForm.reset();
+        $changePasswordForm.clearErrors();
+        setChangePasswordUserQueryParam(user.id);
+    }
+
+    function closeChangePasswordDialog() {
+        changePasswordDialogOpen = false;
+        changePasswordConfirmOpen = false;
+        selectedUserForPasswordChange = null;
+        selectedUserIdForPasswordChange = null;
+        $changePasswordForm.reset();
+        $changePasswordForm.clearErrors();
+        setChangePasswordUserQueryParam(null);
+    }
+
+    function requestConfirmChangePassword(e: SubmitEvent) {
+        e.preventDefault();
+        changePasswordConfirmOpen = true;
+    }
+
+    function confirmChangePassword() {
+        const userId = selectedUserIdForPasswordChange;
+        if (!userId) return;
+
+        $changePasswordForm.post(`/admin/users/${userId}/change-password`, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('Password updated successfully');
+                closeChangePasswordDialog();
+            },
+            onError: () => {
+                changePasswordConfirmOpen = false;
+                toast.error('Failed to update password');
+            },
+        });
     }
 
     function formatDate(dateString: string | null): string {
@@ -211,13 +266,19 @@
     });
 
     function buildQueryParams(page?: number): string {
-        const params = new URLSearchParams();
+        const params = getCurrentUrlSearchParams();
 
         if (filterSearch) params.set('search', filterSearch);
         if (filterRole) params.set('role', filterRole);
         if (filterStatus) params.set('status', filterStatus);
         if (perPage && perPage !== '25') params.set('per_page', perPage);
         if (page && page > 1) params.set('page', page.toString());
+        if (changePasswordDialogOpen && selectedUserIdForPasswordChange) {
+            params.set(
+                'change_password_user',
+                String(selectedUserIdForPasswordChange),
+            );
+        }
 
         return params.toString() ? `?${params.toString()}` : '';
     }
@@ -287,6 +348,49 @@
     const hasActiveFilters = $derived(
         !!filterSearch || !!filterRole || !!filterStatus,
     );
+
+    function syncChangePasswordModalFromUrl() {
+        const params = getCurrentUrlSearchParams();
+        const userIdParam = params.get('change_password_user');
+
+        if (!userIdParam) {
+            if (changePasswordDialogOpen) closeChangePasswordDialog();
+            return;
+        }
+
+        const userId = Number(userIdParam);
+        if (!Number.isFinite(userId) || userId <= 0) return;
+
+        const user = users.data.find((u) => u.id === userId) ?? null;
+        const isNewSelection = selectedUserIdForPasswordChange !== userId;
+
+        selectedUserIdForPasswordChange = userId;
+        selectedUserForPasswordChange = user;
+        changePasswordDialogOpen = true;
+
+        if (isNewSelection) {
+            changePasswordConfirmOpen = false;
+            $changePasswordForm.reset();
+            $changePasswordForm.clearErrors();
+        }
+    }
+
+    onMount(() => {
+        syncChangePasswordModalFromUrl();
+        window.addEventListener('popstate', syncChangePasswordModalFromUrl);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('popstate', syncChangePasswordModalFromUrl);
+    });
+
+    let lastKnownUrl = $state('');
+    $effect(() => {
+        if ($page.url !== lastKnownUrl) {
+            lastKnownUrl = $page.url;
+            syncChangePasswordModalFromUrl();
+        }
+    });
 </script>
 
 <svelte:head>
@@ -309,7 +413,10 @@
                         New User
                     </Button>
                 </Dialog.Trigger>
-                <Dialog.Content class="sm:max-w-[500px]">
+                <Dialog.Content
+                    class="sm:max-w-[500px]"
+                    onCloseAutoFocus={closeCreateDialog}
+                >
                     <Dialog.Header>
                         <Dialog.Title>Create New User</Dialog.Title>
                     </Dialog.Header>
@@ -404,6 +511,132 @@
                 </Dialog.Content>
             </Dialog.Root>
         </div>
+
+        <!-- Change password -->
+        <Dialog.Root bind:open={changePasswordDialogOpen}>
+            <Dialog.Content
+                onCloseAutoFocus={closeChangePasswordDialog}
+                class="sm:max-w-[500px]"
+                data-testid="admin-change-user-password-dialog"
+            >
+                <Dialog.Header>
+                    <Dialog.Title>Change user password</Dialog.Title>
+                </Dialog.Header>
+
+                <form
+                    onsubmit={requestConfirmChangePassword}
+                    class="flex flex-col gap-4"
+                    data-testid="admin-change-user-password-form"
+                >
+                    <p class="text-sm text-muted-foreground">
+                        {#if selectedUserForPasswordChange}
+                            This will update the password for <span
+                                class="font-medium"
+                                >{selectedUserForPasswordChange.name}</span
+                            >
+                            and send them an email notification.
+                        {:else if selectedUserIdForPasswordChange}
+                            This will update the password for user ID <span
+                                class="font-medium"
+                                >{selectedUserIdForPasswordChange}</span
+                            >
+                            and send them an email notification.
+                        {/if}
+                    </p>
+
+                    <div class="flex flex-col gap-2">
+                        <Label for="change_password">New Password</Label>
+                        <Input
+                            id="change_password"
+                            type="password"
+                            bind:value={$changePasswordForm.password}
+                            required
+                            placeholder="••••••••"
+                            data-testid="admin-change-user-password-input"
+                        />
+                        <ErrorFeedback
+                            message={$changePasswordForm.errors.password}
+                        />
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <Label for="change_password_confirmation">
+                            Confirm Password
+                        </Label>
+                        <Input
+                            id="change_password_confirmation"
+                            type="password"
+                            bind:value={
+                                $changePasswordForm.password_confirmation
+                            }
+                            required
+                            placeholder="••••••••"
+                            data-testid="admin-change-user-password-confirmation-input"
+                        />
+                        <ErrorFeedback
+                            message={$changePasswordForm.errors
+                                .password_confirmation}
+                        />
+                    </div>
+
+                    <Dialog.Footer>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onclick={closeChangePasswordDialog}
+                            disabled={$changePasswordForm.processing}
+                            data-testid="admin-change-user-password-cancel"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            disabled={$changePasswordForm.processing}
+                            data-testid="admin-change-user-password-submit"
+                        >
+                            Continue
+                        </Button>
+                    </Dialog.Footer>
+                </form>
+
+                <AlertDialog.Root bind:open={changePasswordConfirmOpen}>
+                    <AlertDialog.Content
+                        data-testid="admin-change-user-password-confirm-dialog"
+                    >
+                        <AlertDialog.Header>
+                            <AlertDialog.Title
+                                >Confirm password change</AlertDialog.Title
+                            >
+                            <AlertDialog.Description>
+                                {#if selectedUserForPasswordChange}
+                                    Are you sure you want to change the password
+                                    for {selectedUserForPasswordChange.name}?
+                                    They will receive an email notification.
+                                {:else if selectedUserIdForPasswordChange}
+                                    Are you sure you want to change the password
+                                    for user ID {selectedUserIdForPasswordChange}?
+                                    They will receive an email notification.
+                                {/if}
+                            </AlertDialog.Description>
+                        </AlertDialog.Header>
+                        <AlertDialog.Footer>
+                            <AlertDialog.Cancel
+                                data-testid="admin-change-user-password-confirm-cancel"
+                            >
+                                Cancel
+                            </AlertDialog.Cancel>
+                            <AlertDialog.Action
+                                onclick={confirmChangePassword}
+                                disabled={$changePasswordForm.processing}
+                                data-testid="admin-change-user-password-confirm-action"
+                            >
+                                Confirm
+                            </AlertDialog.Action>
+                        </AlertDialog.Footer>
+                    </AlertDialog.Content>
+                </AlertDialog.Root>
+            </Dialog.Content>
+        </Dialog.Root>
 
         <!-- Filters -->
         <div class="rounded-lg border bg-card p-4">
@@ -619,10 +852,11 @@
                                                         variant="ghost"
                                                         size="sm"
                                                         onclick={() =>
-                                                            forcePasswordReset(
+                                                            openChangePasswordDialog(
                                                                 cell.row
                                                                     .original,
                                                             )}
+                                                        data-testid={`admin-user-change-password-${cell.row.original.id}`}
                                                     >
                                                         <KeyRound
                                                             class="h-4 w-4"

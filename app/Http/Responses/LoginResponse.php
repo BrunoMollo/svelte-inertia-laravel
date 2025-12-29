@@ -12,8 +12,8 @@ class LoginResponse implements LoginResponseContract
 
         return redirect()->intended(
             match (true) {
-                $user->hasRole('superadmin') => route('superadmin.dashboard'),
-                default => throw new \Exception('Pagina no desarollada aun'),
+                $user->hasRole('superadmin') => route('admin.dashboard'),
+                default => route('dashboard'),
             }
         );
     }

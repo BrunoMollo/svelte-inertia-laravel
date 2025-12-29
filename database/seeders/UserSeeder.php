@@ -45,5 +45,17 @@ class UserSeeder extends Seeder
             ]
         );
         $student->assignRole('student');
+
+        // Create disabled teacher user
+        $disabledTeacher = User::firstOrCreate(
+            ['email' => 'disabled-teacher@example.com'],
+            [
+                'name' => 'Disabled Teacher',
+                'password' => Hash::make('querty123'),
+                'email_verified_at' => now(),
+                'disabled_at' => now(),
+            ]
+        );
+        $disabledTeacher->assignRole('teacher');
     }
 }

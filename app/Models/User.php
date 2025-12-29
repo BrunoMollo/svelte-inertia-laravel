@@ -57,8 +57,33 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'disabled_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Check if the user is disabled.
+     */
+    public function isDisabled(): bool
+    {
+        return $this->disabled_at !== null;
+    }
+
+    /**
+     * Disable the user.
+     */
+    public function disable(): void
+    {
+        $this->update(['disabled_at' => now()]);
+    }
+
+    /**
+     * Enable the user.
+     */
+    public function enable(): void
+    {
+        $this->update(['disabled_at' => null]);
     }
 
     /**

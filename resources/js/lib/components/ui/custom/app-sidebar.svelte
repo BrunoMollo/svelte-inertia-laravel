@@ -1,12 +1,19 @@
 <script lang="ts">
-    import { LayoutDashboard, LifeBuoy, Send, Shell } from '@lucide/svelte';
+    import {
+        LayoutDashboard,
+        LifeBuoy,
+        Send,
+        Shell,
+        Users,
+    } from '@lucide/svelte';
     import type { Icon } from '@lucide/svelte';
     import NavMain from '$lib/components/ui/custom/nav-main.svelte';
     import NavSecondary from '$lib/components/ui/custom/nav-secondary.svelte';
     import NavUser from '$lib/components/ui/custom/nav-user.svelte';
     import * as Sidebar from '$lib/components/ui/sidebar';
     import ProjectSwitcher from './project-switcher.svelte';
-    import { router } from '@inertiajs/svelte';
+    import { router, page } from '@inertiajs/svelte';
+    import type { PageProps } from '$lib/types';
 
     type Project = {
         logo: typeof Icon;
@@ -32,13 +39,26 @@
         }[];
     };
 
-    const navMain: MainNavigationItem[] = [
+    const auth = $state($page.props.auth as PageProps['auth']);
+    const user = $derived(auth.user);
+    const isSuperadmin = $derived(user?.roles?.includes('superadmin') ?? false);
+
+    const navMain: MainNavigationItem[] = $derived([
         {
             title: 'Dashboard',
             url: '/dashboard',
             icon: LayoutDashboard,
         },
-    ];
+        ...(isSuperadmin
+            ? [
+                  {
+                      title: 'Administrar Usuarios',
+                      url: '/admin/users',
+                      icon: Users,
+                  },
+              ]
+            : []),
+    ]);
 
     type SecondaryNavigationItem = {
         title: string;

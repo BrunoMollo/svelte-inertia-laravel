@@ -5,8 +5,11 @@ export interface User {
     name: string;
     email: string;
     email_verified_at?: string;
+    disabled_at?: string | null;
     profile_photo_url: string | undefined;
     two_factor_confirmed_at: string | null;
+    roles?: string[];
+    permissions?: string[];
 }
 
 export type PageProps<

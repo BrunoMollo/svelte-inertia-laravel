@@ -17,10 +17,11 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth', 'verified')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return Inertia::render('Admin/Dashboard');
-    })->name('dashboard');
+    Route::prefix('superamdin')->middleware('role:superadmin')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('Admin/Dashboard');
+        })->name('superadmin.dashboard');
+    });
 
     // Profile
     Route::get('/account/profile', [ProfileController::class, 'show'])->name('profile.show');

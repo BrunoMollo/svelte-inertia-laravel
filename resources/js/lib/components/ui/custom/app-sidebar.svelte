@@ -6,6 +6,7 @@
     import NavUser from '$lib/components/ui/custom/nav-user.svelte';
     import * as Sidebar from '$lib/components/ui/sidebar';
     import ProjectSwitcher from './project-switcher.svelte';
+    import { router } from '@inertiajs/svelte';
 
     type Project = {
         logo: typeof Icon;

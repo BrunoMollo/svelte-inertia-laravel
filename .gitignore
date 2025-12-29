@@ -1,6 +1,7 @@
 /.phpunit.cache
 /bootstrap/ssr
 /bootstrap/cache
+/bootstrap/cache/*
 /node_modules
 /public/build
 /public/hot
@@ -24,3 +25,4 @@ yarn-error.log
 /.vscode
 /.zed
 .windsurfrules
+

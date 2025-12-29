@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Searchable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,7 +15,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, Notifiable,  TwoFactorAuthenticatable;
+    use HasFactory, HasRoles, Notifiable, Searchable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -111,7 +112,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getProfilePhotoUrlAttribute(): string
     {
         return $this->profile_photo_path
-            ? asset('storage/'.$this->profile_photo_path)
+            ? asset('storage/' . $this->profile_photo_path)
             : '';
+    }
+
+    /**
+     * Get the searchable columns for this model.
+     *
+     * @return array<string>
+     */
+    public static function getSearchableColumns(): array
+    {
+        return [
+            'name',
+            'email',
+        ];
     }
 }

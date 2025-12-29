@@ -54,8 +54,7 @@
             total: number;
         };
         filters?: {
-            name?: string;
-            email?: string;
+            search?: string;
             role?: string;
             status?: string;
             per_page?: string;
@@ -70,8 +69,7 @@
         return filters?.[key] || '';
     }
 
-    let filterName = $state(getFilterValue('name'));
-    let filterEmail = $state(getFilterValue('email'));
+    let filterSearch = $state(getFilterValue('search'));
     let filterRole = $state(getFilterValue('role'));
     let filterStatus = $state(getFilterValue('status'));
     let perPage = $state(getFilterValue('per_page') || '25');
@@ -215,8 +213,7 @@
     function buildQueryParams(page?: number): string {
         const params = new URLSearchParams();
 
-        if (filterName) params.set('name', filterName);
-        if (filterEmail) params.set('email', filterEmail);
+        if (filterSearch) params.set('search', filterSearch);
         if (filterRole) params.set('role', filterRole);
         if (filterStatus) params.set('status', filterStatus);
         if (perPage && perPage !== '25') params.set('per_page', perPage);
@@ -242,13 +239,8 @@
     // Debounced filter application for text inputs
     const debouncedApplyFilters = debounce(applyFilters, DEBOUNCE_DELAY);
 
-    function handleNameChange(value: string) {
-        filterName = value;
-        debouncedApplyFilters();
-    }
-
-    function handleEmailChange(value: string) {
-        filterEmail = value;
+    function handleSearchChange(value: string) {
+        filterSearch = value;
         debouncedApplyFilters();
     }
 
@@ -277,8 +269,7 @@
     }
 
     function clearFilters() {
-        filterName = '';
-        filterEmail = '';
+        filterSearch = '';
         filterRole = '';
         filterStatus = '';
         perPage = '25';
@@ -294,7 +285,7 @@
     }
 
     const hasActiveFilters = $derived(
-        !!filterName || !!filterEmail || !!filterRole || !!filterStatus,
+        !!filterSearch || !!filterRole || !!filterStatus,
     );
 </script>
 
@@ -430,42 +421,23 @@
                     {/if}
                 </div>
                 <div
-                    class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+                    class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
                 >
                     <div class="flex flex-col gap-2">
-                        <Label for="filter-name">Name</Label>
+                        <Label for="filter-search">Search</Label>
                         <div class="relative">
                             <Search
                                 class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
                             />
                             <Input
-                                id="filter-name"
+                                id="filter-search"
                                 type="text"
-                                value={filterName}
+                                value={filterSearch}
                                 oninput={(e) =>
-                                    handleNameChange(
+                                    handleSearchChange(
                                         (e.target as HTMLInputElement).value,
                                     )}
-                                placeholder="Search by name..."
-                                class="pl-9"
-                            />
-                        </div>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <Label for="filter-email">Email</Label>
-                        <div class="relative">
-                            <Search
-                                class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-                            />
-                            <Input
-                                id="filter-email"
-                                type="email"
-                                value={filterEmail}
-                                oninput={(e) =>
-                                    handleEmailChange(
-                                        (e.target as HTMLInputElement).value,
-                                    )}
-                                placeholder="Search by email..."
+                                placeholder="Search by name or email..."
                                 class="pl-9"
                             />
                         </div>

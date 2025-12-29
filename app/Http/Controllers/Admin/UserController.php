@@ -22,14 +22,9 @@ class UserController extends Controller
     {
         $query = User::query()->with('roles');
 
-        // Filter by name
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
-        }
-
-        // Filter by email
-        if ($request->filled('email')) {
-            $query->where('email', 'like', '%' . $request->input('email') . '%');
+        // Filter by search (searches across searchable columns)
+        if ($request->filled('search')) {
+            $query->search($request->input('search'));
         }
 
         // Filter by role
@@ -51,7 +46,7 @@ class UserController extends Controller
         // Get per_page value, validate it's one of the allowed values
         $perPage = $request->input('per_page', 25);
         $allowedPerPage = [10, 25, 50, 100];
-        if (!in_array((int) $perPage, $allowedPerPage, true)) {
+        if (! in_array((int) $perPage, $allowedPerPage, true)) {
             $perPage = 25;
         }
 
@@ -59,7 +54,7 @@ class UserController extends Controller
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
-            'filters' => $request->only(['name', 'email', 'role', 'status', 'per_page']),
+            'filters' => $request->only(['search', 'role', 'status', 'per_page']),
         ]);
     }
 

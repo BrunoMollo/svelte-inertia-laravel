@@ -71,21 +71,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->disabled_at !== null;
     }
 
-    /**
-     * Disable the user.
-     */
-    public function disable(): void
-    {
-        $this->update(['disabled_at' => now()]);
-    }
 
-    /**
-     * Enable the user.
-     */
-    public function enable(): void
-    {
-        $this->update(['disabled_at' => null]);
-    }
 
     /**
      * Update the user's profile photo.

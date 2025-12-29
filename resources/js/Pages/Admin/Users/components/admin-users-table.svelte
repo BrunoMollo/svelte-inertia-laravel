@@ -156,22 +156,20 @@
     );
 
     function disableUser(user: AdminUsersTableUser) {
-        if (confirm(`Are you sure you want to disable ${user.name}?`)) {
-            router.post(
-                `/admin/users/${user.id}/disable`,
-                {},
-                {
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        toast.success('User disabled successfully');
-                    },
-                    onError: () => {
-                        toast.error('Failed to disable user');
-                    },
+        router.post(
+            `/admin/users/${user.id}/disable`,
+            {},
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.success('User disabled successfully');
                 },
-            );
-        }
+                onError: () => {
+                    toast.error('Failed to disable user');
+                },
+            },
+        );
     }
 
     function enableUser(user: AdminUsersTableUser) {

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 
+
 class UserController extends Controller
 {
     /**
@@ -81,7 +82,7 @@ class UserController extends Controller
      */
     public function disable(Request $request, User $user): RedirectResponse
     {
-        $user->disable();
+        $user['disabled_at'] = now();
         $user->save();
 
         return redirect($request->header('Referer') ?? route('admin.users.index'))
@@ -93,7 +94,8 @@ class UserController extends Controller
      */
     public function enable(Request $request, User $user): RedirectResponse
     {
-        $user->enable();
+        $user['disabled_at'] = null;
+        $user->save();
 
         return redirect($request->header('Referer') ?? route('admin.users.index'))
             ->with('success', 'User enabled successfully.');

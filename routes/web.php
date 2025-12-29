@@ -34,7 +34,8 @@ Route::middleware('auth', 'verified')->group(function () {
         })->name('admin.dashboard');
 
         // User Management
-        Route::resource('users', UserController::class)->only(['index', 'store']);
+        Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+        Route::post('/users', [UserController::class, 'store'])->name('admin.users.store');
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
         Route::post('/users/{user}/disable', [UserController::class, 'disable'])->name('admin.users.disable');
         Route::post('/users/{user}/enable', [UserController::class, 'enable'])->name('admin.users.enable');

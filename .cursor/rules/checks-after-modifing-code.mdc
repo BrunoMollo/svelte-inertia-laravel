@@ -15,10 +15,11 @@ Ensure that any change made to the codebase is validated against formatting, lin
 Before marking a task, fix, refactor, or feature as **done**, the agent **must** run the following commands locally and ensure they complete **without errors**:
 
 ```bash
+pnpm format  > /dev/null && pnpm lint:fix > /dev/null
 ./vendor/bin/pint
-php artisan test
-pnpm format
-pnpm lint:fix
+pnpm lint
+php artisan test --compact
+pnpm check
 pnpm build
 ```
 
@@ -45,9 +46,10 @@ This rule applies to:
 ## Rationale
 
 * `./vendor/bin/pint` → enforces Laravel/PHP code style
-* `php artisan test` → guarantees functional correctness and data consistency
-* `pnpm format` → ensures consistent formatting
-* `pnpm lint:fix` → enforces linting rules and auto-fixes
+* `php artisan test --compact` → guarantees functional correctness and data consistency
+* `pnpm format  > /dev/null && pnpm lint:fix > /dev/null` → ensures consistent formatting and fix linting errors fixable (does not provide queues to change code)
+* `pnpm lint` → Gives the linitng error thant could not be fixed automatically
+* `pnpm check` → ensures the frontend is compied by typescript correctly
 * `pnpm build` → ensures the frontend builts correctly
 
 ## Definition of Done

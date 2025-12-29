@@ -1,0 +1,652 @@
+---
+description: Guidelines for integrating external API providers with HTTP calls
+globs:
+alwaysApply: true
+---
+
+# External API Provider Integration
+
+This project follows a standardized approach for integrating external API providers. All external API integrations must follow these guidelines to ensure consistency, maintainability, and testability.
+
+## Directory Structure
+
+Each external provider must follow this structure:
+
+```
+app/Services/External/
+├── {Provider}Service.php          # Main service class
+└── Mocks/
+    └── {Provider}/
+        ├── {Provider}ServiceMock.php    # Mock service implementation
+        └── {ResponseDto}Faker.php       # Faker for each response DTO
+```
+
+Example:
+```
+app/Services/External/
+├── WeatherService.php
+└── Mocks/
+    └── Weather/
+        ├── WeatherServiceMock.php
+        ├── WeatherResponseFaker.php
+        └── ForecastResponseFaker.php
+```
+
+## Service Class Structure
+
+### Location and Naming
+
+- **Location**: `app/Services/External/{Provider}Service.php`
+- **Naming**: Use PascalCase with "Service" suffix (e.g., `WeatherService`, `PayPalService`)
+
+### Service Implementation Rules
+
+1. **One HTTP call per public method**: Each public method must make **at most one HTTP request**. If you need multiple calls, split them into separate methods.
+
+```php
+<?php
+
+namespace App\Services\External;
+
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpClient\HttpClient;
+
+class WeatherService
+{
+    public function __construct(
+        private readonly string $apiKey,
+        private readonly string $baseUrl,
+    ) {}
+
+    // ✅ Good: One HTTP call per method
+    public function getCurrentWeather(float $latitude, float $longitude): WeatherResponseDto
+    {
+        $startTime = microtime(true);
+        $url = $this->baseUrl . '/data/2.5/weather';
+
+        Log::info('Weather API Request', [
+            'method' => 'getCurrentWeather',
+            'url' => $url,
+            'parameters' => ['lat' => $latitude, 'lon' => $longitude],
+        ]);
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->get($url, [
+            'lat' => $latitude,
+            'lon' => $longitude,
+            'appid' => $this->apiKey,
+            'units' => 'metric',
+        ]);
+
+        $responseTime = (microtime(true) - $startTime) * 1000; // milliseconds
+
+        Log::info('Weather API Response', [
+            'method' => 'getCurrentWeather',
+            'status' => $response->status(),
+            'body' => $response->json(),
+            'response_time_ms' => round($responseTime, 2),
+        ]);
+
+        return WeatherResponseDto::from($response->json());
+    }
+
+    // ✅ Good: Separate method for another HTTP call
+    public function getForecast(float $latitude, float $longitude): ForecastResponseDto
+    {
+        // Implementation...
+    }
+
+    // ❌ Bad: Multiple HTTP calls in one method
+    public function getCurrentWeatherAndForecast(float $latitude, float $longitude): array
+    {
+        $weather = Http::get(...); // First call
+        $forecast = Http::get(...); // Second call - BAD!
+        return [$weather, $forecast];
+    }
+}
+```
+
+## DTOs with Spatie Laravel Data
+
+### Response DTOs
+
+All API responses must be represented using **spatie/laravel-data** DTOs:
+
+```php
+<?php
+
+namespace App\Services\External\Weather\DTOs;
+
+use Spatie\LaravelData\Data;
+
+class WeatherResponseDto extends Data
+{
+    public function __construct(
+        public readonly string $location,
+        public readonly float $temperature,
+        public readonly string $condition,
+        public readonly int $humidity,
+        public readonly float $windSpeed,
+        public readonly ?string $description = null,
+    ) {}
+}
+```
+
+### DTO Location
+
+- **Location**: `app/Services/External/{Provider}/DTOs/`
+- **Naming**: Use PascalCase with "Dto" suffix (e.g., `WeatherResponseDto`, `ForecastResponseDto`)
+
+## Logging Requirements
+
+Every service method **must** log:
+
+1. **Request parameters** before making the call
+2. **Response status code** after the call
+3. **Response body** after the call
+4. **Response time** in milliseconds
+
+```php
+public function getCurrentWeather(float $latitude, float $longitude): WeatherResponseDto
+{
+    $startTime = microtime(true);
+    $url = $this->baseUrl . '/data/2.5/weather';
+
+    // Log request parameters
+    Log::info('Weather API Request', [
+        'provider' => 'weather',
+        'method' => 'getCurrentWeather',
+        'url' => $url,
+        'parameters' => ['lat' => $latitude, 'lon' => $longitude],
+    ]);
+
+    $response = Http::get($url, [
+        'lat' => $latitude,
+        'lon' => $longitude,
+        'appid' => $this->apiKey,
+        'units' => 'metric',
+    ]);
+
+    $responseTime = (microtime(true) - $startTime) * 1000;
+
+    // Log response details
+    Log::info('Weather API Response', [
+        'provider' => 'weather',
+        'method' => 'getCurrentWeather',
+        'status' => $response->status(),
+        'body' => $response->json(),
+        'response_time_ms' => round($responseTime, 2),
+    ]);
+
+    return WeatherResponseDto::from($response->json());
+}
+```
+
+
+## Configuration Files
+
+### Location and Naming
+
+- **Location**: `config/{provider}.php` (lowercase, kebab-case)
+- **Naming**: Use lowercase provider name (e.g., `weather.php`, `paypal.php`)
+
+### Configuration Structure
+
+```php
+<?php
+// config/weather.php
+
+return [
+    'api_key' => env('WEATHER_API_KEY'),
+    'base_url' => env('WEATHER_BASE_URL', 'https://api.openweathermap.org'),
+    'timeout' => env('WEATHER_TIMEOUT', 30),
+    'use_mock' => env('WEATHER_USE_MOCK', false),
+];
+```
+
+### Important Rules
+
+1. **URLs**: Store only the **base URL** in configuration. The **path** (endpoint) must be **hardcoded in the service**.
+2. **Secrets**: All secrets must come from environment variables via `env()`.
+3. **Mock flag**: Include a `use_mock` boolean flag for enabling mock mode.
+
+```php
+// ✅ Good: Base URL in config, path in code
+public function getCurrentWeather(float $latitude, float $longitude): WeatherResponseDto
+{
+    $url = $this->baseUrl . '/data/2.5/weather'; // Path hardcoded
+    // ...
+}
+
+// ❌ Bad: Full URL in config
+// config/weather.php
+'weather_url' => env('WEATHER_URL'), // Don't do this!
+```
+
+### Service Constructor
+
+Inject configuration via constructor:
+
+```php
+<?php
+
+namespace App\Services\External;
+
+class WeatherService
+{
+    public function __construct(
+        private readonly string $apiKey,
+        private readonly string $baseUrl,
+        private readonly int $timeout = 30,
+    ) {}
+}
+```
+
+### Service Provider Registration
+
+Register services in `app/Providers/AppServiceProvider.php`:
+
+```php
+use App\Services\External\WeatherService;
+use App\Services\External\Mocks\Weather\WeatherServiceMock;
+
+public function register(): void
+{
+    $this->app->singleton(WeatherService::class, function ($app) {
+        $config = config('weather');
+
+        // Use mock if enabled and not in production
+        if ($config['use_mock'] && ! app()->environment('production')) {
+            return new WeatherServiceMock();
+        }
+
+        return new WeatherService(
+            apiKey: $config['api_key'],
+            baseUrl: $config['base_url'],
+            timeout: $config['timeout'],
+        );
+    });
+}
+```
+
+## DTO Fakers
+
+### Location and Naming
+
+- **Location**: `app/Services/External/Mocks/{Provider}/{DtoName}Faker.php`
+- **Naming**: Use PascalCase with "Faker" suffix (e.g., `WeatherResponseFaker`, `ForecastResponseFaker`)
+
+### Faker Implementation
+
+Each response DTO must have a corresponding Faker class that generates realistic test data:
+
+```php
+<?php
+
+namespace App\Services\External\Mocks\Weather;
+
+use App\Services\External\Weather\DTOs\WeatherResponseDto;
+use Faker\Generator;
+
+class WeatherResponseFaker
+{
+    public function __construct(
+        private readonly Generator $faker,
+    ) {}
+
+    public function generate(): WeatherResponseDto
+    {
+        return WeatherResponseDto::from([
+            'location' => $this->faker->city(),
+            'temperature' => $this->faker->randomFloat(1, -10, 40),
+            'condition' => $this->faker->randomElement(['sunny', 'cloudy', 'rainy', 'snowy', 'stormy']),
+            'humidity' => $this->faker->numberBetween(0, 100),
+            'windSpeed' => $this->faker->randomFloat(1, 0, 50),
+            'description' => $this->faker->sentence(),
+        ]);
+    }
+
+    // Optional: Generate specific scenarios
+    public function generateSunny(): WeatherResponseDto
+    {
+        return WeatherResponseDto::from([
+            'location' => $this->faker->city(),
+            'temperature' => $this->faker->randomFloat(1, 20, 35),
+            'condition' => 'sunny',
+            'humidity' => $this->faker->numberBetween(30, 60),
+            'windSpeed' => $this->faker->randomFloat(1, 5, 15),
+            'description' => 'Clear sky with sunshine',
+        ]);
+    }
+
+    public function generateRainy(): WeatherResponseDto
+    {
+        return WeatherResponseDto::from([
+            'location' => $this->faker->city(),
+            'temperature' => $this->faker->randomFloat(1, 5, 20),
+            'condition' => 'rainy',
+            'humidity' => $this->faker->numberBetween(70, 100),
+            'windSpeed' => $this->faker->randomFloat(1, 10, 30),
+            'description' => 'Heavy rain expected',
+        ]);
+    }
+}
+```
+
+### Faker Best Practices
+
+1. **Use realistic data**: Match the format and constraints of the real API
+2. **Provide scenario methods**: Create methods for common scenarios (success, failure, etc.)
+3. **Use Faker library**: Leverage `Faker\Generator` for realistic values
+4. **Match DTO structure**: Ensure generated data matches the DTO exactly
+
+## Service Mock Implementation
+
+### Location and Naming
+
+- **Location**: `app/Services/External/Mocks/{Provider}/{Provider}ServiceMock.php`
+- **Naming**: Use PascalCase with "ServiceMock" suffix (e.g., `WeatherServiceMock`)
+
+### Mock Implementation
+
+The mock service must implement the same interface/contract as the real service and return faked DTOs:
+
+```php
+<?php
+
+namespace App\Services\External\Mocks\Weather;
+
+use App\Services\External\Weather\DTOs\WeatherResponseDto;
+use App\Services\External\Weather\DTOs\ForecastResponseDto;
+use Faker\Factory;
+
+class WeatherServiceMock
+{
+    private readonly WeatherResponseFaker $weatherFaker;
+    private readonly ForecastResponseFaker $forecastFaker;
+
+    public function __construct()
+    {
+        $faker = Factory::create();
+        $this->weatherFaker = new WeatherResponseFaker($faker);
+        $this->forecastFaker = new ForecastResponseFaker($faker);
+    }
+
+    public function getCurrentWeather(float $latitude, float $longitude): WeatherResponseDto
+    {
+        // Return faked data instead of making HTTP call
+        return $this->weatherFaker->generate();
+    }
+
+    public function getForecast(float $latitude, float $longitude): ForecastResponseDto
+    {
+        return $this->forecastFaker->generate();
+    }
+}
+```
+
+### Mock Requirements
+
+1. **Same method signatures**: Mock must match the real service's public methods
+2. **Return faked DTOs**: Use the corresponding Faker classes
+3. **No HTTP calls**: Mock should never make actual HTTP requests
+4. **Fast execution**: Mocks should return immediately
+
+## Dependency Injection with Conditional Mocking
+
+### Service Provider Setup
+
+Use Laravel's service container to conditionally inject mocks:
+
+```php
+<?php
+
+namespace App\Providers;
+
+use App\Services\External\WeatherService;
+use App\Services\External\Mocks\Weather\WeatherServiceMock;
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        $this->app->singleton(WeatherService::class, function ($app) {
+            $config = config('weather');
+
+            // Use mock if enabled AND not in production
+            if ($config['use_mock'] && ! $app->environment('production')) {
+                return new WeatherServiceMock();
+            }
+
+            return new WeatherService(
+                apiKey: $config['api_key'],
+                baseUrl: $config['base_url'],
+                timeout: $config['timeout'] ?? 30,
+            );
+        });
+    }
+}
+```
+
+### Environment Configuration
+
+```env
+# .env
+WEATHER_API_KEY=your_api_key_here
+WEATHER_BASE_URL=https://api.openweathermap.org
+WEATHER_USE_MOCK=true  # Only for local development
+
+# .env.production
+WEATHER_USE_MOCK=false  # Always false in production
+```
+
+## Complete Example
+
+### 1. Configuration File
+
+```php
+<?php
+// config/weather.php
+
+return [
+    'api_key' => env('WEATHER_API_KEY'),
+    'base_url' => env('WEATHER_BASE_URL', 'https://api.openweathermap.org'),
+    'timeout' => env('WEATHER_TIMEOUT', 30),
+    'use_mock' => env('WEATHER_USE_MOCK', false),
+];
+```
+
+### 2. Response DTO
+
+```php
+<?php
+// app/Services/External/Weather/DTOs/WeatherResponseDto.php
+
+namespace App\Services\External\Weather\DTOs;
+
+use Spatie\LaravelData\Data;
+
+class WeatherResponseDto extends Data
+{
+    public function __construct(
+        public readonly string $location,
+        public readonly float $temperature,
+        public readonly string $condition,
+        public readonly int $humidity,
+        public readonly float $windSpeed,
+        public readonly ?string $description = null,
+    ) {}
+}
+```
+
+### 3. Service Implementation
+
+```php
+<?php
+// app/Services/External/WeatherService.php
+
+namespace App\Services\External;
+
+use App\Services\External\Weather\DTOs\WeatherResponseDto;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
+class WeatherService
+{
+    public function __construct(
+        private readonly string $apiKey,
+        private readonly string $baseUrl,
+        private readonly int $timeout = 30,
+    ) {}
+
+    public function getCurrentWeather(float $latitude, float $longitude): WeatherResponseDto
+    {
+        $startTime = microtime(true);
+        $url = $this->baseUrl . '/data/2.5/weather';
+
+        Log::info('Weather API Request', [
+            'provider' => 'weather',
+            'method' => 'getCurrentWeather',
+            'url' => $url,
+            'parameters' => ['lat' => $latitude, 'lon' => $longitude],
+        ]);
+
+        $response = Http::timeout($this->timeout)
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+            ])
+            ->get($url, [
+                'lat' => $latitude,
+                'lon' => $longitude,
+                'appid' => $this->apiKey,
+                'units' => 'metric',
+            ]);
+
+        $responseTime = (microtime(true) - $startTime) * 1000;
+
+        Log::info('Weather API Response', [
+            'provider' => 'weather',
+            'method' => 'getCurrentWeather',
+            'status' => $response->status(),
+            'body' => $response->json(),
+            'response_time_ms' => round($responseTime, 2),
+        ]);
+
+        if (! $response->successful()) {
+            throw new \Exception("Weather API error: {$response->body()}");
+        }
+
+        return WeatherResponseDto::from($response->json());
+    }
+}
+```
+
+### 4. DTO Faker
+
+```php
+<?php
+// app/Services/External/Mocks/Weather/WeatherResponseFaker.php
+
+namespace App\Services\External\Mocks\Weather;
+
+use App\Services\External\Weather\DTOs\WeatherResponseDto;
+use Faker\Generator;
+
+class WeatherResponseFaker
+{
+    public function __construct(
+        private readonly Generator $faker,
+    ) {}
+
+    public function generate(): WeatherResponseDto
+    {
+        return WeatherResponseDto::from([
+            'location' => $this->faker->city(),
+            'temperature' => $this->faker->randomFloat(1, -10, 40),
+            'condition' => $this->faker->randomElement(['sunny', 'cloudy', 'rainy', 'snowy', 'stormy']),
+            'humidity' => $this->faker->numberBetween(0, 100),
+            'windSpeed' => $this->faker->randomFloat(1, 0, 50),
+            'description' => $this->faker->sentence(),
+        ]);
+    }
+}
+```
+
+### 5. Service Mock
+
+```php
+<?php
+// app/Services/External/Mocks/Weather/WeatherServiceMock.php
+
+namespace App\Services\External\Mocks\Weather;
+
+use App\Services\External\Weather\DTOs\WeatherResponseDto;
+use Faker\Factory;
+
+class WeatherServiceMock
+{
+    private readonly WeatherResponseFaker $weatherFaker;
+
+    public function __construct()
+    {
+        $faker = Factory::create();
+        $this->weatherFaker = new WeatherResponseFaker($faker);
+    }
+
+    public function getCurrentWeather(float $latitude, float $longitude): WeatherResponseDto
+    {
+        return $this->weatherFaker->generate();
+    }
+}
+```
+
+### 6. Service Provider Registration
+
+```php
+<?php
+// app/Providers/AppServiceProvider.php
+
+use App\Services\External\WeatherService;
+use App\Services\External\Mocks\Weather\WeatherServiceMock;
+
+public function register(): void
+{
+    $this->app->singleton(WeatherService::class, function ($app) {
+        $config = config('weather');
+
+        if ($config['use_mock'] && ! $app->environment('production')) {
+            return new WeatherServiceMock();
+        }
+
+        return new WeatherService(
+            apiKey: $config['api_key'],
+            baseUrl: $config['base_url'],
+            timeout: $config['timeout'],
+        );
+    });
+}
+```
+
+## Best Practices
+
+1. **One HTTP call per method**: Never combine multiple API calls in a single public method
+2. **Comprehensive logging**: Always log request parameters, response status, body, and timing
+3. **Type safety**: Use DTOs for all API responses
+4. **Realistic fakers**: Make fakers as realistic as possible
+5. **Mock in development**: Use mocks for local development to avoid API costs
+6. **Never mock in production**: Always use real services in production
+7. **Error handling**: Handle API errors appropriately and log them
+8. **Timeout configuration**: Always configure timeouts for HTTP requests
+
+## What NOT to Do ❌
+
+- ❌ Don't make multiple HTTP calls in a single public method
+- ❌ Don't hardcode URLs or secrets in service classes
+- ❌ Don't skip logging request/response data
+- ❌ Don't use mocks in production
+- ❌ Don't create DTOs without corresponding Fakers
+- ❌ Don't put full URLs in configuration (only base URLs)
+- ❌ Don't forget to register services in the service provider

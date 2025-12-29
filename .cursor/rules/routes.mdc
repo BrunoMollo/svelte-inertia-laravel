@@ -1,0 +1,102 @@
+---
+description: Avoid using Route::resource, use explicit route definitions instead
+globs: ["routes/**/*.php"]
+alwaysApply: true
+---
+
+# Laravel Routes
+
+This project uses **explicit route definitions** instead of `Route::resource()` for better clarity and control.
+
+## Why Avoid Route::resource?
+
+- **Better readability**: Explicit routes make it clear which actions are available
+- **More control**: You can easily see and modify individual routes
+- **Easier maintenance**: No hidden routes that might be forgotten
+- **Better testing**: Explicit routes are easier to test and document
+- **Flexibility**: Easier to add custom route names, middleware, or constraints
+
+## ❌ Don't Use Route::resource
+
+```php
+// Bad: Using Route::resource
+Route::resource('users', UserController::class);
+Route::resource('users', UserController::class)->only(['index', 'store']);
+Route::resource('users', UserController::class)->except(['destroy']);
+```
+
+## ✅ Use Explicit Route Definitions
+
+```php
+// Good: Explicit route definitions
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::post('/users', [UserController::class, 'store'])->name('users.store');
+Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
+Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+```
+
+## Custom Actions
+
+For custom actions beyond CRUD operations, use descriptive route names:
+
+```php
+// Good: Custom actions with descriptive names
+Route::post('/users/{user}/disable', [UserController::class, 'disable'])->name('users.disable');
+Route::post('/users/{user}/enable', [UserController::class, 'enable'])->name('users.enable');
+Route::post('/users/{user}/force-password-reset', [UserController::class, 'forcePasswordReset'])->name('users.force-password-reset');
+```
+
+## Route Groups
+
+Use route groups for organization and middleware:
+
+```php
+// Good: Organized route groups
+Route::middleware('auth')->group(function () {
+    Route::prefix('admin')->middleware('role:superadmin')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+        Route::post('/users', [UserController::class, 'store'])->name('admin.users.store');
+        Route::get('/users/{user}', [UserController::class, 'show'])->name('admin.users.show');
+    });
+});
+```
+
+## Route Naming Convention
+
+Follow Laravel's naming conventions:
+
+- **Index**: `{resource}.index` (e.g., `users.index`)
+- **Show**: `{resource}.show` (e.g., `users.show`)
+- **Create**: `{resource}.create` (e.g., `users.create`)
+- **Store**: `{resource}.store` (e.g., `users.store`)
+- **Edit**: `{resource}.edit` (e.g., `users.edit`)
+- **Update**: `{resource}.update` (e.g., `users.update`)
+- **Destroy**: `{resource}.destroy` (e.g., `users.destroy`)
+
+For nested or prefixed routes, include the prefix:
+
+- `admin.users.index`
+- `account.profile.show`
+- `api.v1.users.store`
+
+## Best Practices
+
+1. **Group related routes** using `Route::group()` or `Route::prefix()`
+2. **Use descriptive route names** that clearly indicate the action
+3. **Apply middleware at the group level** when possible
+4. **Keep routes organized** by feature or module
+5. **Document complex routes** with comments when necessary
+
+## Migration from Route::resource
+
+If you find existing `Route::resource()` usage, convert it to explicit routes:
+
+```php
+// Before
+Route::resource('users', UserController::class)->only(['index', 'store']);
+
+// After
+Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::post('/users', [UserController::class, 'store'])->name('users.store');
+```

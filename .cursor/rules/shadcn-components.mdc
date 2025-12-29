@@ -1,0 +1,158 @@
+---
+description: Use shadcn-svelte components instead of creating custom components
+globs: ["**/*.svelte", "**/*.ts"]
+alwaysApply: true
+---
+
+# Using shadcn-svelte Components
+
+This project uses **shadcn-svelte** as the primary component library. Always prefer using existing shadcn-svelte components over creating custom components from scratch.
+
+## Component Discovery Process
+
+Before creating a new component:
+
+1. **Check existing components** in `resources/js/lib/components/ui/`
+2. **Search the shadcn-svelte documentation** at [https://www.shadcn-svelte.com/docs/components](https://www.shadcn-svelte.com/docs/components)
+3. **If a component exists**, use it instead of building custom solutions
+4. **If a component doesn't exist locally**, install it using the CLI
+
+## Installing Components
+
+To add a new shadcn-svelte component, use:
+
+```bash
+pnpm dlx shadcn-svelte@latest add <component-name>
+```
+
+Examples:
+```bash
+# Add a single component
+pnpm dlx shadcn-svelte@latest add button
+
+# Add multiple components
+pnpm dlx shadcn-svelte@latest add card dialog form
+```
+
+## Currently Installed Components
+
+The following components are already available in `resources/js/lib/components/ui/`:
+
+- ✅ Alert Dialog
+- ✅ Avatar
+- ✅ Badge
+- ✅ Breadcrumb
+- ✅ Button
+- ✅ Collapsible
+- ✅ Command
+- ✅ Data Table
+- ✅ Dialog
+- ✅ Dropdown Menu
+- ✅ Input
+- ✅ Input OTP
+- ✅ Label
+- ✅ Separator
+- ✅ Sheet
+- ✅ Sidebar
+- ✅ Skeleton
+- ✅ Sonner (Toast notifications)
+- ✅ Table
+- ✅ Tooltip
+
+## Available Components in shadcn-svelte
+
+All components are documented at [https://www.shadcn-svelte.com/docs/components](https://www.shadcn-svelte.com/docs/components):
+
+- [Accordion](https://shadcn-svelte.com/docs/components/accordion)
+- [Alert Dialog](https://shadcn-svelte.com/docs/components/alert-dialog)
+- [Alert](https://shadcn-svelte.com/docs/components/alert)
+- [Aspect Ratio](https://shadcn-svelte.com/docs/components/aspect-ratio)
+- [Avatar](https://shadcn-svelte.com/docs/components/avatar)
+- [Badge](https://shadcn-svelte.com/docs/components/badge)
+- [Breadcrumb](https://shadcn-svelte.com/docs/components/breadcrumb)
+- [Button Group](https://shadcn-svelte.com/docs/components/button-group)
+- [Button](https://shadcn-svelte.com/docs/components/button)
+- [Calendar](https://shadcn-svelte.com/docs/components/calendar)
+- [Card](https://shadcn-svelte.com/docs/components/card)
+- [Carousel](https://shadcn-svelte.com/docs/components/carousel)
+- [Chart](https://shadcn-svelte.com/docs/components/chart)
+- [Checkbox](https://shadcn-svelte.com/docs/components/checkbox)
+- [Collapsible](https://shadcn-svelte.com/docs/components/collapsible)
+- [Combobox](https://shadcn-svelte.com/docs/components/combobox)
+- [Command](https://shadcn-svelte.com/docs/components/command)
+- [Context Menu](https://shadcn-svelte.com/docs/components/context-menu)
+- [Data Table](https://shadcn-svelte.com/docs/components/data-table)
+- [Date Picker](https://shadcn-svelte.com/docs/components/date-picker)
+- [Dialog](https://shadcn-svelte.com/docs/components/dialog)
+- [Drawer](https://shadcn-svelte.com/docs/components/drawer)
+- [Dropdown Menu](https://shadcn-svelte.com/docs/components/dropdown-menu)
+- [Empty](https://shadcn-svelte.com/docs/components/empty)
+- [Field](https://shadcn-svelte.com/docs/components/field)
+- [Formsnap](https://shadcn-svelte.com/docs/components/form)
+- [Hover Card](https://shadcn-svelte.com/docs/components/hover-card)
+- [Input Group](https://shadcn-svelte.com/docs/components/input-group)
+- [Input OTP](https://shadcn-svelte.com/docs/components/input-otp)
+- [Input](https://shadcn-svelte.com/docs/components/input)
+- [Item](https://shadcn-svelte.com/docs/components/item)
+- [Kbd](https://shadcn-svelte.com/docs/components/kbd)
+- [Label](https://shadcn-svelte.com/docs/components/label)
+- [Menubar](https://shadcn-svelte.com/docs/components/menubar)
+- [Native Select](https://shadcn-svelte.com/docs/components/native-select)
+- [Navigation Menu](https://shadcn-svelte.com/docs/components/navigation-menu)
+- [Pagination](https://shadcn-svelte.com/docs/components/pagination)
+- [Popover](https://shadcn-svelte.com/docs/components/popover)
+- [Progress](https://shadcn-svelte.com/docs/components/progress)
+- [Radio Group](https://shadcn-svelte.com/docs/components/radio-group)
+- [Range Calendar](https://shadcn-svelte.com/docs/components/range-calendar)
+- [Resizable](https://shadcn-svelte.com/docs/components/resizable)
+- [Scroll Area](https://shadcn-svelte.com/docs/components/scroll-area)
+- [Select](https://shadcn-svelte.com/docs/components/select)
+- [Separator](https://shadcn-svelte.com/docs/components/separator)
+- [Sheet](https://shadcn-svelte.com/docs/components/sheet)
+- [Sidebar](https://shadcn-svelte.com/docs/components/sidebar)
+- [Skeleton](https://shadcn-svelte.com/docs/components/skeleton)
+- [Slider](https://shadcn-svelte.com/docs/components/slider)
+- [Sonner](https://shadcn-svelte.com/docs/components/sonner)
+- [Spinner](https://shadcn-svelte.com/docs/components/spinner)
+- [Switch](https://shadcn-svelte.com/docs/components/switch)
+- [Table](https://shadcn-svelte.com/docs/components/table)
+- [Tabs](https://shadcn-svelte.com/docs/components/tabs)
+- [Textarea](https://shadcn-svelte.com/docs/components/textarea)
+- [Toggle Group](https://shadcn-svelte.com/docs/components/toggle-group)
+- [Toggle](https://shadcn-svelte.com/docs/components/toggle)
+- [Tooltip](https://shadcn-svelte.com/docs/components/tooltip)
+- [Typography](https://shadcn-svelte.com/docs/components/typography)
+
+## Importing Components
+
+Components are located in `$lib/components/ui/` and can be imported like this:
+
+```svelte
+<script>
+  import { Button } from '$lib/components/ui/button';
+  import { Dialog, DialogContent, DialogTrigger } from '$lib/components/ui/dialog';
+  import { Input } from '$lib/components/ui/input';
+</script>
+```
+
+## Best Practices
+
+1. **Always check existing components first** before creating new ones
+2. **Use the CLI to add components** instead of manually copying code
+3. **Follow shadcn-svelte patterns** for consistency across the project
+4. **Customize components** by modifying the installed files in `resources/js/lib/components/ui/`
+5. **Create wrapper components** in `resources/js/lib/components/custom/` when you need project-specific variations
+
+## What NOT to Do ❌
+
+- ❌ Don't create custom components that duplicate shadcn-svelte functionality
+- ❌ Don't manually copy component code from the website (use the CLI)
+- ❌ Don't install components globally (always use `pnpm dlx`)
+- ❌ Don't modify components in `node_modules` (modify them in `resources/js/lib/components/ui/`)
+
+## Custom Components
+
+For project-specific components that don't exist in shadcn-svelte, place them in:
+- `resources/js/lib/components/custom/` - Project-specific custom components
+
+These should be clearly documented and only created when no shadcn-svelte alternative exists.

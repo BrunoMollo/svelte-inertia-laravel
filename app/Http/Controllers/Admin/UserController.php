@@ -20,13 +20,46 @@ class UserController extends Controller
      */
     public function index(Request $request): Response
     {
-        $users = User::query()
-            ->with('roles')
-            ->latest()
-            ->paginate(15);
+        $query = User::query()->with('roles');
+
+        // Filter by name
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        // Filter by email
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->input('email') . '%');
+        }
+
+        // Filter by role
+        if ($request->filled('role')) {
+            $query->whereHas('roles', function ($q) use ($request) {
+                $q->where('name', $request->input('role'));
+            });
+        }
+
+        // Filter by status (active/disabled)
+        if ($request->filled('status')) {
+            if ($request->input('status') === 'active') {
+                $query->whereNull('disabled_at');
+            } elseif ($request->input('status') === 'disabled') {
+                $query->whereNotNull('disabled_at');
+            }
+        }
+
+        // Get per_page value, validate it's one of the allowed values
+        $perPage = $request->input('per_page', 25);
+        $allowedPerPage = [10, 25, 50, 100];
+        if (!in_array((int) $perPage, $allowedPerPage, true)) {
+            $perPage = 25;
+        }
+
+        $users = $query->latest()->paginate((int) $perPage)->withQueryString();
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
+            'filters' => $request->only(['name', 'email', 'role', 'status', 'per_page']),
         ]);
     }
 
@@ -55,7 +88,7 @@ class UserController extends Controller
     {
         $user->disable();
 
-        return redirect()->route('users.index')
+        return redirect($request->header('Referer') ?? route('admin.users.index'))
             ->with('success', 'User disabled successfully.');
     }
 
@@ -66,7 +99,7 @@ class UserController extends Controller
     {
         $user->enable();
 
-        return redirect()->route('users.index')
+        return redirect($request->header('Referer') ?? route('admin.users.index'))
             ->with('success', 'User enabled successfully.');
     }
 
@@ -84,7 +117,7 @@ class UserController extends Controller
         // Send password reset notification
         Password::sendResetLink(['email' => $user->email]);
 
-        return redirect()->route('users.index')
+        return redirect($request->header('Referer') ?? route('admin.users.index'))
             ->with('success', 'Password reset email sent successfully.');
     }
 }

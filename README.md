@@ -23,18 +23,20 @@ git clone https://github.com/BrunoMollo/svelte-inertia-laravel && cd svelte-iner
 
 ```bash
 cp .env.example .env
+composer install
+php artisan key:generate
 ```
 
-
-3. Start the development servers:
+3. Run the migrations:
 ```bash
-make up
+php artisan migrate
 ```
 
-4. Migrate the database:
+4. Start the development servers:
 ```bash
-make migrate
+pnp run dev:both
 ```
+
 
 Visit `http://localhost:8000` to view the application.
 

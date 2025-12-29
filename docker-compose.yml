@@ -1,21 +1,4 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: laravel-dev
-    ports:
-      - '${APP_PORT}:8000'
-      - '5173:5173'
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks:
-      - net
-    develop:
-      watch:
-       - action: sync
-         path: ..
-         target: /app
   mailpit:
     image: axllent/mailpit
     container_name: ${MAIL_HOST}

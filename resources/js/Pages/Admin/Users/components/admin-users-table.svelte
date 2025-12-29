@@ -2,6 +2,7 @@
     import { Button } from '$lib/components/ui/button';
     import { Input } from '$lib/components/ui/input';
     import { Label } from '$lib/components/ui/label';
+    import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
     import * as Table from '$lib/components/ui/table';
     import {
         createSvelteTable,
@@ -10,7 +11,15 @@
     import { debounce } from '$lib/utils';
     import { router, page } from '@inertiajs/svelte';
     import { createColumnHelper, getCoreRowModel } from '@tanstack/table-core';
-    import { KeyRound, Lock, Search, Unlock, Users, X } from '@lucide/svelte';
+    import {
+        ChevronDown,
+        KeyRound,
+        Lock,
+        Search,
+        Unlock,
+        Users,
+        X,
+    } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
 
     type Role = {
@@ -247,56 +256,109 @@
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <div class="flex flex-col gap-2">
                 <Label for="filter-search">Search</Label>
-                <div class="relative">
-                    <Search
-                        class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-                    />
-                    <Input
-                        id="filter-search"
-                        type="text"
-                        value={filterSearch}
-                        oninput={(e) =>
-                            handleSearchChange(
-                                (e.target as HTMLInputElement).value,
-                            )}
-                        placeholder="Search by name or email..."
-                        class="pl-9"
-                        data-testid="admin-users-filter-search"
-                    />
+                <div class="flex items-center gap-2">
+                    <div class="relative w-full">
+                        <Search
+                            class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                        />
+                        <Input
+                            id="filter-search"
+                            type="text"
+                            value={filterSearch}
+                            oninput={(e) =>
+                                handleSearchChange(
+                                    (e.target as HTMLInputElement).value,
+                                )}
+                            placeholder={'Search by name or email...'}
+                            class="pl-9"
+                            data-testid="admin-users-filter-search"
+                        />
+                    </div>
                 </div>
             </div>
             <div class="flex flex-col gap-2">
                 <Label for="filter-role">Role</Label>
-                <select
-                    id="filter-role"
-                    value={filterRole}
-                    onchange={(e) =>
-                        handleRoleChange((e.target as HTMLSelectElement).value)}
-                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    data-testid="admin-users-filter-role"
-                >
-                    <option value="">All Roles</option>
-                    <option value="superadmin">Superadmin</option>
-                    <option value="teacher">Teacher</option>
-                    <option value="student">Student</option>
-                </select>
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger>
+                        <Button
+                            variant="outline"
+                            class="w-full justify-between"
+                            data-testid="admin-users-filter-role-trigger"
+                        >
+                            {filterRole
+                                ? filterRole.charAt(0).toUpperCase() +
+                                  filterRole.slice(1)
+                                : 'All Roles'}
+                            <ChevronDown class="ml-2 h-4 w-4 opacity-50" />
+                        </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content align="start" class="w-[220px]">
+                        <DropdownMenu.Item
+                            onclick={() => handleRoleChange('')}
+                            data-testid="admin-users-filter-role-all"
+                        >
+                            All Roles
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item
+                            onclick={() => handleRoleChange('superadmin')}
+                            data-testid="admin-users-filter-role-superadmin"
+                        >
+                            Superadmin
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                            onclick={() => handleRoleChange('teacher')}
+                            data-testid="admin-users-filter-role-teacher"
+                        >
+                            Teacher
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                            onclick={() => handleRoleChange('student')}
+                            data-testid="admin-users-filter-role-student"
+                        >
+                            Student
+                        </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                </DropdownMenu.Root>
             </div>
             <div class="flex flex-col gap-2">
                 <Label for="filter-status">Status</Label>
-                <select
-                    id="filter-status"
-                    value={filterStatus}
-                    onchange={(e) =>
-                        handleStatusChange(
-                            (e.target as HTMLSelectElement).value,
-                        )}
-                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    data-testid="admin-users-filter-status"
-                >
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="disabled">Disabled</option>
-                </select>
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger>
+                        <Button
+                            variant="outline"
+                            class="w-full justify-between"
+                            data-testid="admin-users-filter-status-trigger"
+                        >
+                            {filterStatus
+                                ? filterStatus.charAt(0).toUpperCase() +
+                                  filterStatus.slice(1)
+                                : 'All Status'}
+                            <ChevronDown class="ml-2 h-4 w-4 opacity-50" />
+                        </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content align="start" class="w-[220px]">
+                        <DropdownMenu.Item
+                            onclick={() => handleStatusChange('')}
+                            data-testid="admin-users-filter-status-all"
+                        >
+                            All Status
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item
+                            onclick={() => handleStatusChange('active')}
+                            data-testid="admin-users-filter-status-active"
+                        >
+                            Active
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                            onclick={() => handleStatusChange('disabled')}
+                            data-testid="admin-users-filter-status-disabled"
+                        >
+                            Disabled
+                        </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                </DropdownMenu.Root>
             </div>
         </div>
     </div>
@@ -466,21 +528,32 @@
         </div>
         <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
-                <select
-                    id="per-page"
-                    value={perPage}
-                    onchange={(e) =>
-                        handlePerPageChange(
-                            (e.target as HTMLSelectElement).value,
-                        )}
-                    class="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    data-testid="admin-users-per-page"
-                >
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            class="justify-between"
+                            data-testid="admin-users-per-page"
+                        >
+                            {perPage} per page
+                            <ChevronDown class="ml-2 h-4 w-4 opacity-50" />
+                        </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content align="end" class="w-[160px]">
+                        {#each [10, 25, 50, 100] as perPageOption}
+                            <DropdownMenu.Item
+                                onclick={() =>
+                                    handlePerPageChange(
+                                        perPageOption.toString(),
+                                    )}
+                                data-testid="admin-users-per-page-10"
+                            >
+                                {perPageOption} per page
+                            </DropdownMenu.Item>
+                        {/each}
+                    </DropdownMenu.Content>
+                </DropdownMenu.Root>
             </div>
             {#if users.last_page > 1}
                 <div class="flex gap-2">

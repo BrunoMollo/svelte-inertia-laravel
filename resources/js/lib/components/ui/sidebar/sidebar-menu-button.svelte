@@ -42,6 +42,8 @@
     import type { HTMLAttributes } from 'svelte/elements';
     import { useSidebar } from './context.svelte.js';
 
+    type SidebarMenuButtonChildProps = Record<string, unknown>;
+
     let {
         ref = $bindable(null),
         class: className,
@@ -76,7 +78,7 @@
     });
 </script>
 
-{#snippet Button({ props }: { props?: Record })}
+{#snippet Button({ props }: { props?: SidebarMenuButtonChildProps })}
     {@const mergedProps = mergeProps(buttonProps, props)}
     {#if child}
         {@render child({ props: mergedProps })}

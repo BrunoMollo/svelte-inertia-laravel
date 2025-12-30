@@ -3,6 +3,7 @@
 use App\Http\Controllers\Account\ProfileController;
 use App\Http\Controllers\Account\SecurityController;
 use App\Http\Controllers\Account\SessionController;
+use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,12 @@ Route::middleware('auth', 'verified')->group(function () {
         Route::post('/users/{user}/disable', [UserController::class, 'disable'])->name('admin.users.disable');
         Route::post('/users/{user}/enable', [UserController::class, 'enable'])->name('admin.users.enable');
         Route::post('/users/{user}/change-password', [UserController::class, 'changePassword'])->name('admin.users.change-password');
+
+        // Courses
+        Route::get('/courses', [CourseController::class, 'index'])->name('admin.courses.index');
+        Route::post('/courses', [CourseController::class, 'store'])->name('admin.courses.store');
+        Route::patch('/courses/{course}', [CourseController::class, 'update'])->name('admin.courses.update');
+        Route::delete('/courses/{course}', [CourseController::class, 'destroy'])->name('admin.courses.destroy');
     });
 
     // Profile

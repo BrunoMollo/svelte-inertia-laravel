@@ -4,6 +4,7 @@
         LifeBuoy,
         Send,
         Shell,
+        BookOpen,
         Users,
     } from '@lucide/svelte';
     import type { Icon } from '@lucide/svelte';
@@ -55,6 +56,11 @@
                       title: 'Administrar Usuarios',
                       url: '/admin/users',
                       icon: Users,
+                  },
+                  {
+                      title: 'Cursos',
+                      url: '/admin/courses',
+                      icon: BookOpen,
                   },
               ]
             : []),

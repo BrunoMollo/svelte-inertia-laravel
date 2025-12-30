@@ -50,8 +50,109 @@ The development environment should:
 
 ---
 
-If you want, I can:
+## Using Factories in Seeders
 
-* Condense this into a **one-paragraph Cursor guardrail**
-* Turn it into a **PR checklist**
-* Or adapt it to **factory-based seeders** (Laravel-style best practice)
+**CRITICAL RULE**: When creating or modifying seeders, **always use factories** instead of directly calling model methods to create records.
+
+### ❌ Don't Call Models Directly
+
+```php
+// Bad: Directly calling model methods
+User::create([
+    'name' => 'John Doe',
+    'email' => 'john@example.com',
+    'password' => Hash::make('password'),
+]);
+
+User::firstOrCreate(
+    ['email' => 'john@example.com'],
+    [
+        'name' => 'John Doe',
+        'password' => Hash::make('password'),
+    ]
+);
+```
+
+### ✅ Always Use Factories
+
+```php
+// Good: Using factories
+User::factory()
+    ->create([
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+    ]);
+
+User::factory()
+    ->firstOrCreate(
+        ['email' => 'john@example.com'],
+        ['name' => 'John Doe']
+    );
+```
+
+### Using Factory States
+
+Factories often provide states for common scenarios. Use them:
+
+```php
+// Good: Using factory states
+User::factory()
+    ->disabled()
+    ->create(['email' => 'disabled@example.com']);
+
+Course::factory()
+    ->published()
+    ->withDateRange($startDate, $endDate)
+    ->firstOrCreate(['name' => 'Published Course']);
+```
+
+### Combining Factory States with Overrides
+
+You can combine factory states with attribute overrides:
+
+```php
+// Good: Factory state + specific attributes
+User::factory()
+    ->disabled()
+    ->firstOrCreate(
+        ['email' => 'disabled-teacher@example.com'],
+        ['name' => 'Disabled Teacher']
+    );
+```
+
+### Why Use Factories?
+
+1. **Consistency**: Factories ensure all attributes are properly set according to the model's requirements
+2. **Maintainability**: When model attributes change, factories are updated in one place
+3. **Default values**: Factories provide sensible defaults for all fields
+4. **Relationships**: Factories can handle relationships and complex setups
+5. **Testing**: Same factories used in tests ensure consistency between test and seed data
+
+### Exception: Third-Party Models
+
+For third-party models (like Spatie Permission's `Role`), if no factory exists, direct model calls are acceptable:
+
+```php
+// Acceptable: Third-party model without factory
+Role::firstOrCreate(['name' => 'superadmin']);
+```
+
+However, consider creating a factory even for third-party models if you use them frequently.
+
+### Factory Requirements
+
+When creating a new model:
+
+1. **Always create a factory** using `php artisan make:model -mf`
+2. **Update the factory** when model attributes change
+3. **Use factory states** for common scenarios (e.g., `published()`, `disabled()`, `draft()`)
+4. **Keep factories in sync** with migrations
+
+### Pre-merge Checklist (Updated)
+
+* Did this feature introduce a new state, flag, or role?
+* Is that state represented in the seeders?
+* **Are seeders using factories instead of direct model calls?**
+* Can a new developer see this case by simply running `db:seed`?
+
+> ❗ If a seeder calls model methods directly instead of using factories, **it violates this rule**.

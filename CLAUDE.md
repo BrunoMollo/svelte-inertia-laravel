@@ -89,8 +89,8 @@ php artisan test --filter=TestName  # Run specific test
 - **Middleware**: `app/Http/Middleware/` - Including HandleInertiaRequests
 - **Models**: `app/Models/` - Eloquent models (User, Session)
 - **Routes**:
-  - `routes/web.php` - Main application routes
-  - `routes/auth.php` - Authentication routes (loaded via Fortify)
+    - `routes/web.php` - Main application routes
+    - `routes/auth.php` - Authentication routes (loaded via Fortify)
 
 ### Authentication
 
@@ -110,47 +110,54 @@ php artisan test --filter=TestName  # Run specific test
 This project uses **Svelte 5 with Runes**, not Svelte 4. Key differences:
 
 ### Reactivity
+
 ```svelte
 <!-- Use $state instead of let -->
 <script>
-  let count = $state(0);  // Not: let count = 0
+    let count = $state(0); // Not: let count = 0
 </script>
 ```
 
 ### Derived State
+
 ```svelte
 <script>
-  let count = $state(0);
-  const double = $derived(count * 2);  // Not: $: double = count * 2
+    let count = $state(0);
+    const double = $derived(count * 2); // Not: $: double = count * 2
 </script>
 ```
 
 ### Props
+
 ```svelte
 <script>
-  let { title, description = 'default' } = $props();  // Not: export let title
+    let { title, description = 'default' } = $props(); // Not: export let title
 </script>
 ```
 
 ### Events
+
 ```svelte
 <!-- Use onclick, not on:click -->
 <button onclick={() => count++}>Click</button>
 ```
 
 ### Component Events
+
 ```svelte
 <!-- Pass callback props, not createEventDispatcher -->
 <script>
-  let { onSubmit } = $props();
+    let { onSubmit } = $props();
 </script>
+
 <form onsubmit={onSubmit}>...</form>
 ```
 
 ### Snippets (Not Slots)
+
 ```svelte
 <script>
-  let { children, header } = $props();
+    let { children, header } = $props();
 </script>
 
 {@render header?.()}
@@ -160,20 +167,24 @@ This project uses **Svelte 5 with Runes**, not Svelte 4. Key differences:
 ## Important Development Rules
 
 ### Package Manager
+
 - **ALWAYS use pnpm**, NEVER use npm
 - Install packages: `pnpm add <package>` or `pnpm add -D <package>`
 
 ### Svelte 5
+
 - Use Svelte 5 runes (`$state`, `$derived`, `$effect`, `$props`)
 - Avoid Svelte stores - use runes instead
 - See `.cursor/rules/svelte-5.mdc` for comprehensive migration guide
 
 ### Styling
+
 - Use Tailwind CSS 4 for styling
 - Avoid writing plain CSS unless absolutely necessary
 - Tailwind config is automatic with Vite plugin
 
 ### Laravel Models
+
 - When creating models, always use `php artisan make:model -mf` (includes migration and factory)
 - Keep factories synchronized with migrations
 - Prefer timestamp columns over booleans (e.g., `activated_at` instead of `is_active`)
@@ -204,6 +215,7 @@ Skip validation only for very minor changes (small style fixes). Always validate
 
 1. Create Svelte component in `resources/js/Pages/FeatureName/PageName.svelte`
 2. Add route in `routes/web.php`:
+
 ```php
 Route::get('/path', function () {
     return Inertia::render('FeatureName/PageName', [
@@ -215,24 +227,26 @@ Route::get('/path', function () {
 ### Inertia Forms
 
 Use Inertia's form helper with Svelte 5:
+
 ```svelte
 <script>
-  import { useForm } from '@inertiajs/svelte';
+    import { useForm } from '@inertiajs/svelte';
 
-  const form = useForm({
-    name: '',
-    email: '',
-  });
+    const form = useForm({
+        name: '',
+        email: '',
+    });
 
-  function submit() {
-    $form.post(route('route.name'));
-  }
+    function submit() {
+        $form.post(route('route.name'));
+    }
 </script>
 ```
 
 ### Shared Props
 
 Global props available to all pages (via HandleInertiaRequests):
+
 - `auth.user` - Current authenticated user
 - `ziggy` - Route helper data
 
@@ -246,11 +260,13 @@ php artisan pail --filter=error  # Filter by level
 ## File Organization
 
 ### Backend
+
 - Controllers should be thin and delegate to Actions when logic grows
 - Keep related functionality grouped (Account/Profile, Account/Security)
 - Use Form Requests for validation
 
 ### Frontend
+
 - Page components in `Pages/`
 - Reusable UI components in `lib/components/ui/`
 - Custom app components in `lib/components/ui/custom/`

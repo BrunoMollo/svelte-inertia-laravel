@@ -1,5 +1,16 @@
 {
-  "enabledPlugins": {
-    "laravel-simplifier@laravel": true
-  }
+    "enabledPlugins": {
+        "laravel-simplifier@laravel": true
+    },
+    "permissions": {
+        "allow": [
+            "Bash(php artisan:*)",
+            "Bash(pnpm dlx shadcn-svelte@latest add:*)",
+            "Bash(./vendor/bin/pint:*)",
+            "Bash(pnpm lint:fix:*)",
+            "Bash(pnpm format:*)",
+            "Bash(pnpm build:*)",
+            "Bash(pnpm test:*)"
+        ]
+    }
 }

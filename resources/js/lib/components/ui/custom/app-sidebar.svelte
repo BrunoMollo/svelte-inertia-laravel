@@ -1,12 +1,19 @@
 <script lang="ts">
-    import { LayoutDashboard, LifeBuoy, Send, Shell } from '@lucide/svelte';
+    import type { PageProps } from '$lib/types';
+    import {
+        LayoutDashboard,
+        LifeBuoy,
+        Send,
+        Shell,
+        Users,
+    } from '@lucide/svelte';
     import type { Icon } from '@lucide/svelte';
     import NavMain from '$lib/components/ui/custom/nav-main.svelte';
     import NavSecondary from '$lib/components/ui/custom/nav-secondary.svelte';
     import NavUser from '$lib/components/ui/custom/nav-user.svelte';
     import * as Sidebar from '$lib/components/ui/sidebar';
     import ProjectSwitcher from './project-switcher.svelte';
-    import { router } from '@inertiajs/svelte';
+    import { page } from '@inertiajs/svelte';
 
     type Project = {
         logo: typeof Icon;
@@ -32,13 +39,30 @@
         }[];
     };
 
-    const navMain: MainNavigationItem[] = [
-        {
-            title: 'Dashboard',
-            url: '/dashboard',
-            icon: LayoutDashboard,
-        },
-    ];
+    const auth = $derived($page.props.auth as PageProps['auth']);
+    const isSuperadmin = $derived(
+        auth?.user?.roles?.some((role) => role.name === 'superadmin') ?? false,
+    );
+
+    const navMain: MainNavigationItem[] = $derived.by(() => {
+        const items: MainNavigationItem[] = [
+            {
+                title: 'Dashboard',
+                url: '/dashboard',
+                icon: LayoutDashboard,
+            },
+        ];
+
+        if (isSuperadmin) {
+            items.push({
+                title: 'Users',
+                url: '/superadmin/users',
+                icon: Users,
+            });
+        }
+
+        return items;
+    });
 
     type SecondaryNavigationItem = {
         title: string;

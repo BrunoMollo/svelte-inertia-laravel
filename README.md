@@ -29,15 +29,16 @@ php artisan key:generate
 ```
 
 3. Run the migrations:
+
 ```bash
 php artisan migrate --seed
 ```
 
 4. Start the development servers:
+
 ```bash
 composer run dev
 ```
-
 
 Visit `http://localhost:8000` to view the application.
 
@@ -85,7 +86,6 @@ This project implements a modern monolithic architecture using Laravel as the ba
 
 - **Frontend-Backend communication**
     - Inertia.js for seamless frontend-backend communication
-
 
 ## Tailwind CSS 4 + Vite 7
 

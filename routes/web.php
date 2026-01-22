@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    \Log::info('Welcome to your Laravel application!');
     return Inertia::render('Public/Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -48,4 +47,4 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::delete('/account/sessions/browser-sessions/{id}', [SessionController::class, 'destroySession'])->name('session.destroySession');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

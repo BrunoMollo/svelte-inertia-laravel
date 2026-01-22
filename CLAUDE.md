@@ -183,6 +183,14 @@ This project uses **Svelte 5 with Runes**, not Svelte 4. Key differences:
 - Avoid writing plain CSS unless absolutely necessary
 - Tailwind config is automatic with Vite plugin
 
+### shadcn-svelte Components
+
+To check available shadcn-svelte components and their usage, fetch the components documentation:
+
+```bash
+curl https://www.shadcn-svelte.com/llms.txt
+```
+
 ### Laravel Models
 
 - When creating models, always use `php artisan make:model -mf` (includes migration and factory)
@@ -202,6 +210,16 @@ pnpm build              # Ensure build succeeds
 ```
 
 Skip validation only for very minor changes (small style fixes). Always validate for feature additions or significant changes.
+
+## Project Scripts & Tools
+
+### Claude Agents
+
+The project has a specialized agent configuration for shadcn installations:
+- **Agent**: `shadcn-installer`
+- **Model**: Haiku (cost-effective for simple tasks)
+- **Purpose**: Non-interactive shadcn-svelte component installation
+- **Config**: `.claude/agents/shadcn-installer.yaml`
 
 ## Routing & Navigation
 

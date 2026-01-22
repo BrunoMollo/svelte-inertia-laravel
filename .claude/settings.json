@@ -5,6 +5,7 @@
     "permissions": {
         "allow": [
             "Bash(php artisan:*)",
+            "Bash(curl https://www.shadcn-svelte.com/llms.txt)",
             "Bash(pnpm dlx shadcn-svelte@latest add:*)",
             "Bash(./vendor/bin/pint:*)",
             "Bash(pnpm lint:fix:*)",

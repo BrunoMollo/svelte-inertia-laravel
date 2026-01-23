@@ -259,6 +259,56 @@ For batch localization of components, use the specialized agent:
 **Config**: `.claude/agents/svelte-localizer.yaml`
 **Purpose**: Convert hardcoded text in Svelte components to use `$_()` with Spanish keys and add English translations
 
+### Email Localization (Backend)
+
+**Emails are sent in the recipient user's preferred locale**, falling back to `app()->getLocale()`.
+
+- **Translations**: `lang/es/mail.php` (Spanish text), `lang/en/mail.php` (English translations)
+- **Keys are Spanish text**: Like the frontend, use full Spanish text as translation keys (e.g., `'Has sido invitado a :app'`)
+- **User locale**: Users have a `locale` field (nullable) and a `preferredLocale()` method
+- **Usage pattern**: Use the `UsesUserLocale` trait in Mailable classes
+
+Example:
+
+```php
+use App\Mail\Concerns\UsesUserLocale;
+
+class SomeMail extends Mailable
+{
+    use Queueable, SerializesModels, UsesUserLocale;
+
+    public function __construct(public User $user)
+    {
+        $this->setUserLocale(); // Set locale before envelope/content methods
+    }
+
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: __('Has sido invitado a :app', ['app' => $value]),
+        );
+    }
+}
+```
+
+**Translation files**:
+
+```php
+// lang/es/mail.php (Spanish is the source language)
+return [
+    'Has sido invitado a :app' => 'Has sido invitado a :app',
+    // ...
+];
+
+// lang/en/mail.php (English translations)
+return [
+    'Has sido invitado a :app' => 'You have been invited to :app',
+    // ...
+];
+```
+
+**Important**: Call `$this->setUserLocale()` in the constructor to ensure the subject and body use the correct locale.
+
 ## Important Development Rules
 
 ### Package Manager

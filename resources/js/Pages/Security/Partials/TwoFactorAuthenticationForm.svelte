@@ -10,6 +10,7 @@
     import { CheckCircle, Siren } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
     import * as InputOTP from '$lib/components/ui/input-otp';
+    import { _ } from '$lib/i18n';
 
     // State
     let enabling = $state(false);
@@ -46,7 +47,7 @@
                 qrCode = response.data.svg;
             })
             .then(() => {
-                toast.success('2FA QR Code generated');
+                toast.success($_('Código QR de 2FA generado'));
             });
     }
 
@@ -61,10 +62,10 @@
                 qrCode = null;
                 twoFactorEnabled = true;
                 showRecoveryCodes();
-                toast.success('2FA successfully enabled');
+                toast.success($_('2FA habilitado exitosamente'));
             },
             onError: () => {
-                toast.error('There was an error enabling 2FA');
+                toast.error($_('Hubo un error habilitando 2FA'));
             },
         });
     }
@@ -87,12 +88,12 @@
             onSuccess: () => {
                 disabling = false;
                 twoFactorEnabled = false;
-                toast.success('2FA successfully disabled');
+                toast.success($_('2FA deshabilitado exitosamente'));
             },
             onError: () => {
                 disabling = false;
                 twoFactorEnabled = true;
-                toast.error('There was an error disabling 2FA');
+                toast.error($_('Hubo un error deshabilitando 2FA'));
             },
             onFinish: () => {
                 disabling = false;
@@ -104,12 +105,13 @@
 <section class="flex max-w-xl flex-col gap-6">
     <header class="flex flex-col gap-2">
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Two Factor Authentication
+            {$_('Autenticación de dos factores')}
         </h2>
 
         <p class="text-sm text-gray-600 dark:text-gray-400">
-            Add additional security to your account using two factor
-            authentication.
+            {$_(
+                'Añade seguridad adicional a tu cuenta utilizando autenticación de dos factores.',
+            )}
         </p>
     </header>
 
@@ -118,17 +120,20 @@
             <div class="flex items-center gap-4 text-sm">
                 <Siren class="text-red-500" />
                 <h3>
-                    Two-factor authentication is not enabled. We recommend
-                    enabling it.
+                    {$_(
+                        'La autenticación de dos factores no está habilitada. Te recomendamos habilitarla.',
+                    )}
                 </h3>
             </div>
             <ConfirmWithPassword
-                title="Enable 2FA"
-                description="To start enabling two-factor authentication, you must confirm your password."
+                title={$_('Habilitar 2FA')}
+                description={$_(
+                    'Para habilitar la autenticación de dos factores, debes confirmar tu contraseña.',
+                )}
                 onConfirm={enableTwoFactorAuthentication}
             >
                 <Button type="button" disabled={enabling}>
-                    {enabling ? 'Enabling...' : 'Enable'}
+                    {enabling ? $_('Habilitando...') : $_('Habilitar')}
                 </Button>
             </ConfirmWithPassword>
         </div>
@@ -139,16 +144,16 @@
             <p
                 class="text-sm font-medium text-balance text-gray-900 dark:text-gray-100"
             >
-                To finish enabling two factor authentication, scan the following
-                QR code using your phone's authenticator application or enter
-                the setup key and provide the generated OTP code.
+                {$_(
+                    'Para completar la habilitación de autenticación de dos factores, escanea el siguiente código QR con tu aplicación autenticadora del teléfono o ingresa la clave de configuración y proporciona el código OTP generado.',
+                )}
             </p>
 
             <div class="contrast-200">{@html qrCode}</div>
 
             <div class="flex flex-col gap-2">
                 <form onsubmit={confirmTwoFactorAuthentication}>
-                    <Label for="code">Code</Label>
+                    <Label for="code">{$_('Código')}</Label>
 
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-2">
@@ -167,7 +172,9 @@
                             </InputOTP.Root>
 
                             <Button type="submit" disabled={$form.processing}>
-                                {$form.processing ? 'Confirming...' : 'Confirm'}
+                                {$form.processing
+                                    ? $_('Confirmando...')
+                                    : $_('Confirmar')}
                             </Button>
                         </div>
 
@@ -182,7 +189,7 @@
         <div class="flex flex-col gap-6">
             <div class="flex items-center gap-4 text-sm">
                 <CheckCircle class="text-green-500" />
-                <h3>You've already enabled 2FA.</h3>
+                <h3>{$_('Ya tienes habilitado 2FA.')}</h3>
             </div>
             {#if recoveryCodes.length > 0}
                 <div class="flex max-w-xl flex-col gap-4">
@@ -190,12 +197,11 @@
                         <span
                             class="font-semibold text-red-600 dark:text-red-400"
                         >
-                            Important:
+                            {$_('Importante:')}
                         </span>
-                        These recovery codes will only be shown once. Store them in
-                        a secure password manager immediately. They can be used to
-                        recover access to your account if your two factor authentication
-                        device is lost.
+                        {$_(
+                            'Estos códigos de recuperación se mostrarán solo una vez. Guárdalos en un gestor de contraseñas seguro de inmediato. Pueden usarse para recuperar el acceso a tu cuenta si pierdes tu dispositivo de autenticación de dos factores.',
+                        )}
                     </div>
 
                     <div
@@ -209,12 +215,16 @@
             {/if}
             <div class="flex gap-4">
                 <ConfirmWithPassword
-                    title="Disable 2FA"
-                    description="To disable two-factor authentication, you must confirm your password."
+                    title={$_('Deshabilitar 2FA')}
+                    description={$_(
+                        'Para deshabilitar la autenticación de dos factores, debes confirmar tu contraseña.',
+                    )}
                     onConfirm={disableTwoFactorAuthentication}
                 >
                     <Button type="button" disabled={disabling}>
-                        {disabling ? 'Disabling...' : 'Disable'}
+                        {disabling
+                            ? $_('Deshabilitando...')
+                            : $_('Deshabilitar')}
                     </Button>
                 </ConfirmWithPassword>
             </div>

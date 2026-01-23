@@ -9,6 +9,7 @@
             "Bash(pnpm dlx shadcn-svelte@latest add:*)",
             "Bash(./vendor/bin/pint:*)",
             "Bash(pnpm lint:fix:*)",
+            "Bash(pnpm lint:*)",
             "Bash(pnpm format:*)",
             "Bash(pnpm build:*)",
             "Bash(pnpm test:*)"

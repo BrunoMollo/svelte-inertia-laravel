@@ -1,9 +1,10 @@
 <script lang="ts">
     import AuthenticatedLayout from '$lib/layouts/AuthenticatedLayout.svelte';
+    import { _ } from '$lib/i18n';
 </script>
 
 <svelte:head>
-    <title>Dashboard</title>
+    <title>{$_('Dashboard')}</title>
 </svelte:head>
 
 <AuthenticatedLayout>

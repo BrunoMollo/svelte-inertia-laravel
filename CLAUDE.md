@@ -164,6 +164,101 @@ This project uses **Svelte 5 with Runes**, not Svelte 4. Key differences:
 {@render children?.()}
 ```
 
+## Internationalization (i18n)
+
+This project uses a custom i18n system for localization. **Spanish is the source language** and English translations are provided.
+
+### Required Pattern for All Components
+
+**ALWAYS use the `$_()` function for user-facing text** in Svelte components:
+
+1. **Import the i18n helper**:
+
+    ```svelte
+    <script>
+        import { _ } from '$lib/i18n';
+    </script>
+    ```
+
+2. **Wrap all visible text with `$_()`** using **Spanish as the parameter**:
+
+    ```svelte
+    <!-- Page titles -->
+    <svelte:head>
+        <title>{$_('Bienvenido')}</title>
+    </svelte:head>
+
+    <!-- Navigation and links -->
+    <a href="/login">{$_('Iniciar sesión')}</a>
+
+    <!-- Buttons and labels -->
+    <button>{$_('Registrarse')}</button>
+    <label>{$_('Nombre de usuario')}</label>
+
+    <!-- Paragraphs and headings -->
+    <h1>{$_('Configuración de cuenta')}</h1>
+    <p>{$_('Tu Landing va aquí')}</p>
+
+    <!-- Form placeholders -->
+    <input placeholder={$_('Ingresa tu email')} />
+    ```
+
+3. **Add English translations** to `resources/js/lib/i18n/locales/en.json`:
+    ```json
+    {
+        "Bienvenido": "Welcome",
+        "Iniciar sesión": "Login",
+        "Registrarse": "Register"
+    }
+    ```
+
+### What to Localize
+
+- Page titles and meta descriptions
+- Navigation text and menu items
+- Button labels and link text
+- Form labels, placeholders, and validation messages
+- Headings, paragraphs, and body text
+- Error messages and notifications
+- Success/info messages
+- Alt text for images
+- ARIA labels for accessibility
+
+### What NOT to Localize
+
+- Code comments
+- Console logs (unless user-facing)
+- Variable names and function names
+- API endpoints or route names
+- Technical identifiers
+- CSS classes
+- Email addresses and URLs (unless part of user-facing text)
+
+### Important Rules
+
+- **Spanish is the KEY**: The Spanish text inside `$_()` serves as both the default text AND the translation key
+- **Natural Spanish**: Write natural, idiomatic Spanish, not literal translations
+- **Consistent terminology**: Use the same Spanish terms across all components
+- **Check for duplicates**: Review `en.json` before adding new translations to avoid duplicates
+- **Keep sorted**: Maintain alphabetical order in translation files for maintainability
+
+### Example Reference
+
+See `resources/js/Pages/Public/Welcome.svelte` for a complete example of a properly localized component.
+
+### svelte-localizer Agent
+
+For batch localization of components, use the specialized agent:
+
+```bash
+# The svelte-localizer agent can help convert existing components
+# It uses Haiku model for cost-effectiveness
+```
+
+**Agent**: `svelte-localizer`
+**Config**: `.claude/agents/svelte-localizer.yaml`
+**Purpose**: Convert hardcoded text in Svelte components to use `$_()` with Spanish keys and add English translations
+
 ## Important Development Rules
 
 ### Package Manager
@@ -215,11 +310,21 @@ Skip validation only for very minor changes (small style fixes). Always validate
 
 ### Claude Agents
 
-The project has a specialized agent configuration for shadcn installations:
-- **Agent**: `shadcn-installer`
+The project has specialized agent configurations for common tasks:
+
+#### shadcn-installer
+
 - **Model**: Haiku (cost-effective for simple tasks)
 - **Purpose**: Non-interactive shadcn-svelte component installation
 - **Config**: `.claude/agents/shadcn-installer.yaml`
+- **Usage**: Install UI components without manual interaction
+
+#### svelte-localizer
+
+- **Model**: Haiku (cost-effective for simple tasks)
+- **Purpose**: Localize Svelte components using the `$_()` pattern
+- **Config**: `.claude/agents/svelte-localizer.yaml`
+- **Usage**: Convert hardcoded text to Spanish `$_()` calls with English translations
 
 ## Routing & Navigation
 

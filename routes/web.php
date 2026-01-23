@@ -38,6 +38,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/account/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::patch('/account/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/account/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/user/locale', [ProfileController::class, 'updateLocale'])->name('user.locale.update');
 
     // Security
     Route::get('/account/security', [SecurityController::class, 'show'])->name('security.show');

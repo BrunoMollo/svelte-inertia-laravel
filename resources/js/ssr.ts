@@ -2,9 +2,16 @@ import { createInertiaApp, type ResolvedComponent } from '@inertiajs/svelte';
 import createServer from '@inertiajs/svelte/server';
 import type { RouteName } from 'ziggy-js';
 import { route } from '../../vendor/tightenco/ziggy';
+import { initI18n } from './lib/i18n';
 
-createServer((page) =>
-    createInertiaApp({
+createServer((page) => {
+    // Initialize i18n with locale from page props
+    const locale = (page.props as any).locale;
+    if (locale) {
+        initI18n(locale);
+    }
+
+    return createInertiaApp({
         page,
         resolve: (name) => {
             const pages = import.meta.glob<ResolvedComponent>(
@@ -25,5 +32,5 @@ createServer((page) =>
 
             return new App({ target: el!, props });
         },
-    }),
-);
+    });
+});

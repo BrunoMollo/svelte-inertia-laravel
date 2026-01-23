@@ -3,6 +3,7 @@
     import * as InputOTP from '$lib/components/ui/input-otp';
     import AuthenticationLayout from '$lib/layouts/AuthenticationLayout.svelte';
     import { useForm } from '@inertiajs/svelte';
+    import { _ } from '$lib/i18n';
     import { ShieldCheck } from '@lucide/svelte';
 
     const form = useForm<{ code: string; processing: boolean }>({
@@ -29,14 +30,16 @@
 </script>
 
 <svelte:head>
-    <title>Login</title>
+    <title>{$_('Autenticación de dos factores')}</title>
 </svelte:head>
 
 <AuthenticationLayout>
     <div class="flex flex-col items-center gap-6 text-center">
         <div class="flex flex-col items-center gap-4">
             <ShieldCheck class="size-12" />
-            <h1 class="text-2xl font-bold">Two-Factor Authentication</h1>
+            <h1 class="text-2xl font-bold">
+                {$_('Autenticación de dos factores')}
+            </h1>
         </div>
 
         <InputOTP.Root
@@ -55,7 +58,9 @@
         </InputOTP.Root>
 
         <p class="text-balance text-sm text-muted-foreground">
-            Please enter the one-time password from your authenticator app.
+            {$_(
+                'Ingresa la contraseña de un solo uso de tu aplicación de autenticación',
+            )}
         </p>
 
         <ErrorFeedback message={$form.errors.code} />

@@ -2,6 +2,7 @@
     import * as Sidebar from '$lib/components/ui/sidebar';
     import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
     import { ChevronsUpDown, type Icon, Plus } from '@lucide/svelte';
+    import { _ } from 'svelte-i18n';
 
     interface Project {
         logo: typeof Icon;
@@ -50,7 +51,7 @@
                 sideOffset={4}
             >
                 <DropdownMenu.Label class="text-xs text-muted-foreground">
-                    Projects
+                    {$_('Projects')}
                 </DropdownMenu.Label>
                 {#each projects as project, index}
                     <DropdownMenu.Item
@@ -76,7 +77,7 @@
                         <Plus class="size-4" />
                     </div>
                     <div class="font-medium text-muted-foreground">
-                        Add project
+                        {$_('Add project')}
                     </div>
                 </DropdownMenu.Item>
             </DropdownMenu.Content>

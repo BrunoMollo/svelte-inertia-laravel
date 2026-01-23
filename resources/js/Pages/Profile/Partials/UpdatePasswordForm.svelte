@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from '$lib/i18n';
     import { Button } from '$lib/components/ui/button';
     import { Input } from '$lib/components/ui/input';
     import { Label } from '$lib/components/ui/label';
@@ -30,7 +31,7 @@
             preserveScroll: true,
             onSuccess: () => {
                 $form.reset();
-                toast.success('Password updated successfully');
+                toast.success($_('Contraseña actualizada exitosamente'));
             },
             onError: (errors) => {
                 if (errors.password) {
@@ -50,17 +51,19 @@
 <section class={cn('flex flex-col gap-6', className)}>
     <header class="flex flex-col gap-2">
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Update Password
+            {$_('Actualizar contraseña')}
         </h2>
 
         <p class="text-sm text-gray-600 dark:text-gray-400">
-            Ensure your account is using a long, random password to stay secure.
+            {$_(
+                'Asegúrate de que tu cuenta esté usando una contraseña larga y aleatoria para mantenerte seguro.',
+            )}
         </p>
     </header>
 
     <form onsubmit={updatePassword} class="flex flex-col gap-4">
         <div class="flex flex-col gap-2">
-            <Label for="current_password">Current Password</Label>
+            <Label for="current_password">{$_('Contraseña actual')}</Label>
 
             <Input
                 id="current_password"
@@ -78,7 +81,7 @@
         </div>
 
         <div class="flex flex-col gap-2">
-            <Label for="password">New Password</Label>
+            <Label for="password">{$_('Nueva contraseña')}</Label>
 
             <Input
                 id="password"
@@ -96,7 +99,9 @@
         </div>
 
         <div class="flex flex-col gap-2">
-            <Label for="password_confirmation">Confirm Password</Label>
+            <Label for="password_confirmation"
+                >{$_('Confirmar contraseña')}</Label
+            >
 
             <Input
                 id="password_confirmation"
@@ -114,7 +119,9 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <Button type="submit" disabled={$form.processing}>Save</Button>
+            <Button type="submit" disabled={$form.processing}
+                >{$_('Guardar cambios')}</Button
+            >
         </div>
     </form>
 </section>

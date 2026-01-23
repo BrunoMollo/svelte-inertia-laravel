@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'disabled_at',
+        'locale',
     ];
 
     /**
@@ -76,6 +77,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function enable(): void
     {
         $this->update(['disabled_at' => null]);
+    }
+
+    public function preferredLocale(): string
+    {
+        return $this->locale ?? app()->getLocale();
     }
 
     /**

@@ -21,7 +21,6 @@ export {
     Root,
     ScrollDownButton,
     ScrollUpButton,
-    Value,
     //
     Root as Select,
     Content as SelectContent,
@@ -37,4 +36,5 @@ export {
     Value as SelectValue,
     Separator,
     Trigger,
+    Value,
 };

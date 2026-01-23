@@ -3,12 +3,13 @@
     import type { PageProps } from '$lib/types';
     import { Link } from '@inertiajs/svelte';
     import { Command } from '@lucide/svelte';
+    import { _ } from '$lib/i18n';
 
     let { auth } = $props() as PageProps;
 </script>
 
 <svelte:head>
-    <title>Welcome</title>
+    <title>{$_('Bienvenido')}</title>
 </svelte:head>
 
 <div class="flex h-svh flex-col">
@@ -31,20 +32,20 @@
                         href="#"
                         class="rounded-md text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                     >
-                        Dashboard
+                        {$_('Dashboard')}
                     </Link>
                 {:else}
                     <Link
                         href={route('login')}
                         class="rounded-md text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                     >
-                        Log in
+                        {$_('Iniciar sesión')}
                     </Link>
                     <Link
                         href={route('register')}
                         class="rounded-md text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                     >
-                        Register
+                        {$_('Registrarse')}
                     </Link>
                 {/if}
             </nav>
@@ -54,7 +55,7 @@
     <main class="mx-auto h-full w-full max-w-7xl grow">
         <div class="relative flex h-full items-center justify-center">
             <p class="text-[clamp(1.5rem,5vw,4rem)] leading-none">
-                Your landing goes here
+                {$_('Tu Landing va aquí')}
             </p>
             <Ripple />
         </div>

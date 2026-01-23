@@ -21,6 +21,7 @@
     } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
     import { untrack } from 'svelte';
+    import { _ } from '$lib/i18n';
 
     type Props = {
         users: PaginatedData<User>;
@@ -97,11 +98,11 @@
         $deleteForm.delete(route('superadmin.users.destroy', deleteUserId), {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success('User deleted successfully');
+                toast.success($_('Usuario eliminado exitosamente'));
                 deleteUserId = null;
             },
             onError: () => {
-                toast.error('Failed to delete user');
+                toast.error($_('Error al eliminar el usuario'));
             },
         });
     }
@@ -118,11 +119,13 @@
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    toast.success('User status updated');
+                    toast.success($_('Estado del usuario actualizado'));
                     toggleUserId = null;
                 },
                 onError: () => {
-                    toast.error('Failed to update user status');
+                    toast.error(
+                        $_('Error al actualizar el estado del usuario'),
+                    );
                 },
             },
         );
@@ -138,11 +141,15 @@
         $resetForm.post(route('superadmin.users.reset-password', resetUserId), {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success('Password reset email sent');
+                toast.success(
+                    $_('Correo de restablecimiento de contraseña enviado'),
+                );
                 resetUserId = null;
             },
             onError: () => {
-                toast.error('Failed to send reset email');
+                toast.error(
+                    $_('Error al enviar el correo de restablecimiento'),
+                );
             },
         });
     }
@@ -166,21 +173,23 @@
 </script>
 
 <svelte:head>
-    <title>User Management</title>
+    <title>{$_('Gestión de usuarios')}</title>
 </svelte:head>
 
 <AuthenticatedLayout>
     <div class="flex flex-col gap-6">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-semibold">User Management</h1>
+                <h1 class="text-2xl font-semibold">
+                    {$_('Gestión de usuarios')}
+                </h1>
                 <p class="text-muted-foreground text-sm">
-                    Manage users and their roles
+                    {$_('Gestiona usuarios y sus roles')}
                 </p>
             </div>
             <Button href={route('superadmin.users.create')}>
                 <Plus class="mr-2 size-4" />
-                Add User
+                {$_('Añadir usuario')}
             </Button>
         </div>
 
@@ -192,7 +201,7 @@
                 />
                 <Input
                     type="text"
-                    placeholder="Search by name or email..."
+                    placeholder={$_('Busca por nombre o correo electrónico...')}
                     class="pl-10"
                     bind:value={search}
                     onkeydown={(e) => e.key === 'Enter' && applyFilters()}
@@ -208,10 +217,10 @@
                 }}
             >
                 <Select.Trigger class="w-[160px]">
-                    <Select.Value placeholder="All Roles" />
+                    <Select.Value placeholder={$_('Todos los roles')} />
                 </Select.Trigger>
                 <Select.Content>
-                    <Select.Item value="">All Roles</Select.Item>
+                    <Select.Item value="">{$_('Todos los roles')}</Select.Item>
                     {#each roles as role (role.id)}
                         <Select.Item value={role.name}>{role.name}</Select.Item>
                     {/each}
@@ -227,18 +236,25 @@
                 }}
             >
                 <Select.Trigger class="w-[160px]">
-                    <Select.Value placeholder="All Statuses" />
+                    <Select.Value placeholder={$_('Todos los estados')} />
                 </Select.Trigger>
                 <Select.Content>
-                    <Select.Item value="">All Statuses</Select.Item>
-                    <Select.Item value="active">Active</Select.Item>
-                    <Select.Item value="disabled">Disabled</Select.Item>
+                    <Select.Item value="">{$_('Todos los estados')}</Select.Item
+                    >
+                    <Select.Item value="active">{$_('Activo')}</Select.Item>
+                    <Select.Item value="disabled"
+                        >{$_('Deshabilitado')}</Select.Item
+                    >
                 </Select.Content>
             </Select.Root>
 
-            <Button variant="outline" onclick={applyFilters}>Search</Button>
+            <Button variant="outline" onclick={applyFilters}
+                >{$_('Buscar')}</Button
+            >
             {#if search || roleFilter || statusFilter}
-                <Button variant="ghost" onclick={clearFilters}>Clear</Button>
+                <Button variant="ghost" onclick={clearFilters}
+                    >{$_('Limpiar')}</Button
+                >
             {/if}
         </div>
 
@@ -247,12 +263,14 @@
             <Table.Root>
                 <Table.Header>
                     <Table.Row>
-                        <Table.Head>Name</Table.Head>
-                        <Table.Head>Email</Table.Head>
-                        <Table.Head>Role</Table.Head>
-                        <Table.Head>Status</Table.Head>
-                        <Table.Head>Created</Table.Head>
-                        <Table.Head class="text-right">Actions</Table.Head>
+                        <Table.Head>{$_('Nombre')}</Table.Head>
+                        <Table.Head>{$_('Correo electrónico')}</Table.Head>
+                        <Table.Head>{$_('Rol')}</Table.Head>
+                        <Table.Head>{$_('Estado')}</Table.Head>
+                        <Table.Head>{$_('Creado')}</Table.Head>
+                        <Table.Head class="text-right"
+                            >{$_('Acciones')}</Table.Head
+                        >
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -274,10 +292,12 @@
                             <Table.Cell>
                                 {#if user.disabled_at}
                                     <Badge variant="destructive">
-                                        Disabled
+                                        {$_('Deshabilitado')}
                                     </Badge>
                                 {:else}
-                                    <Badge variant="default">Active</Badge>
+                                    <Badge variant="default"
+                                        >{$_('Activo')}</Badge
+                                    >
                                 {/if}
                             </Table.Cell>
                             <Table.Cell>
@@ -292,7 +312,7 @@
                                             'superadmin.users.edit',
                                             user.id,
                                         )}
-                                        title="Edit"
+                                        title={$_('Editar')}
                                     >
                                         <Pencil class="size-4" />
                                     </Button>
@@ -300,7 +320,7 @@
                                         variant="ghost"
                                         size="icon"
                                         onclick={() => confirmReset(user.id)}
-                                        title="Reset Password"
+                                        title={$_('Restablecer contraseña')}
                                     >
                                         <KeyRound class="size-4" />
                                     </Button>
@@ -309,8 +329,8 @@
                                         size="icon"
                                         onclick={() => confirmToggle(user.id)}
                                         title={user.disabled_at
-                                            ? 'Enable'
-                                            : 'Disable'}
+                                            ? $_('Habilitar')
+                                            : $_('Deshabilitar')}
                                     >
                                         {#if user.disabled_at}
                                             <Power
@@ -326,7 +346,7 @@
                                         variant="ghost"
                                         size="icon"
                                         onclick={() => confirmDelete(user.id)}
-                                        title="Delete"
+                                        title={$_('Eliminar')}
                                     >
                                         <Trash2 class="size-4 text-red-600" />
                                     </Button>
@@ -337,7 +357,7 @@
                         <Table.Row>
                             <Table.Cell colspan={6} class="py-8 text-center">
                                 <p class="text-muted-foreground">
-                                    No users found
+                                    {$_('No se encontraron usuarios')}
                                 </p>
                             </Table.Cell>
                         </Table.Row>
@@ -392,15 +412,16 @@
 >
     <AlertDialog.Content>
         <AlertDialog.Header>
-            <AlertDialog.Title>Delete User</AlertDialog.Title>
+            <AlertDialog.Title>{$_('Eliminar usuario')}</AlertDialog.Title>
             <AlertDialog.Description>
-                Are you sure you want to delete
-                <strong>{getUserToDelete()?.name}</strong>? This action cannot
-                be undone.
+                {$_('¿Estás seguro de que deseas eliminar')}
+                <strong>{getUserToDelete()?.name}</strong>? {$_(
+                    'Esta acción no se puede deshacer.',
+                )}
             </AlertDialog.Description>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-            <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+            <AlertDialog.Cancel>{$_('Cancelar')}</AlertDialog.Cancel>
             <AlertDialog.Action
                 onclick={deleteUser}
                 class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -408,7 +429,7 @@
                 {#if $deleteForm.processing}
                     <Loader2 class="mr-2 size-4 animate-spin" />
                 {/if}
-                Delete
+                {$_('Eliminar')}
             </AlertDialog.Action>
         </AlertDialog.Footer>
     </AlertDialog.Content>
@@ -424,27 +445,33 @@
     <AlertDialog.Content>
         <AlertDialog.Header>
             <AlertDialog.Title>
-                {getUserToToggle()?.disabled_at ? 'Enable' : 'Disable'} User
+                {getUserToToggle()?.disabled_at
+                    ? $_('Habilitar usuario')
+                    : $_('Deshabilitar usuario')}
             </AlertDialog.Title>
             <AlertDialog.Description>
                 {#if getUserToToggle()?.disabled_at}
-                    Are you sure you want to enable
-                    <strong>{getUserToToggle()?.name}</strong>? They will be
-                    able to log in again.
+                    {$_('¿Estás seguro de que deseas habilitar')}
+                    <strong>{getUserToToggle()?.name}</strong>? {$_(
+                        'Podrán iniciar sesión nuevamente.',
+                    )}
                 {:else}
-                    Are you sure you want to disable
-                    <strong>{getUserToToggle()?.name}</strong>? They will be
-                    logged out and unable to access the system.
+                    {$_('¿Estás seguro de que deseas deshabilitar')}
+                    <strong>{getUserToToggle()?.name}</strong>? {$_(
+                        'Serán desconectados y no podrán acceder al sistema.',
+                    )}
                 {/if}
             </AlertDialog.Description>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-            <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+            <AlertDialog.Cancel>{$_('Cancelar')}</AlertDialog.Cancel>
             <AlertDialog.Action onclick={toggleStatus}>
                 {#if $toggleForm.processing}
                     <Loader2 class="mr-2 size-4 animate-spin" />
                 {/if}
-                {getUserToToggle()?.disabled_at ? 'Enable' : 'Disable'}
+                {getUserToToggle()?.disabled_at
+                    ? $_('Habilitar')
+                    : $_('Deshabilitar')}
             </AlertDialog.Action>
         </AlertDialog.Footer>
     </AlertDialog.Content>
@@ -459,19 +486,20 @@
 >
     <AlertDialog.Content>
         <AlertDialog.Header>
-            <AlertDialog.Title>Reset Password</AlertDialog.Title>
+            <AlertDialog.Title>{$_('Restablecer contraseña')}</AlertDialog.Title
+            >
             <AlertDialog.Description>
-                Send a password reset email to
+                {$_('¿Enviar un correo de restablecimiento de contraseña a')}
                 <strong>{getUserToReset()?.email}</strong>?
             </AlertDialog.Description>
         </AlertDialog.Header>
         <AlertDialog.Footer>
-            <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+            <AlertDialog.Cancel>{$_('Cancelar')}</AlertDialog.Cancel>
             <AlertDialog.Action onclick={resetPassword}>
                 {#if $resetForm.processing}
                     <Loader2 class="mr-2 size-4 animate-spin" />
                 {/if}
-                Send Reset Email
+                {$_('Enviar correo de restablecimiento')}
             </AlertDialog.Action>
         </AlertDialog.Footer>
     </AlertDialog.Content>

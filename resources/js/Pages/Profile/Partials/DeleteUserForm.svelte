@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from '$lib/i18n';
     import { Button } from '$lib/components/ui/button';
     import * as Dialog from '$lib/components/ui/dialog';
     import { Input } from '$lib/components/ui/input';
@@ -56,18 +57,18 @@
 <section class={`flex max-w-xl flex-col gap-6 ${className}`}>
     <header class="flex flex-col gap-2">
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Delete Account
+            {$_('Eliminar cuenta')}
         </h2>
 
         <p class="text-sm text-gray-600 dark:text-gray-400">
-            Once your account is deleted, all of its resources and data will be
-            permanently deleted. Before deleting your account, please download
-            any data or information that you wish to retain.
+            {$_(
+                'Una vez que tu cuenta sea eliminada, todos sus recursos y datos se eliminarán permanentemente. Antes de eliminar tu cuenta, descarga cualquier dato o información que desees conservar.',
+            )}
         </p>
     </header>
 
     <Button variant="destructive" class="w-fit" onclick={confirmUserDeletion}>
-        Delete Account
+        {$_('Eliminar cuenta')}
     </Button>
 </section>
 
@@ -81,18 +82,18 @@
         <Dialog.Title
             class="text-lg font-medium text-gray-900 dark:text-gray-100"
         >
-            Are you sure you want to delete your account?
+            {$_('¿Estás seguro de que deseas eliminar tu cuenta?')}
         </Dialog.Title>
 
         <Dialog.Description class="text-sm text-gray-600 dark:text-gray-400">
-            Once your account is deleted, all of its resources and data will be
-            permanently deleted. Please enter your password to confirm you would
-            like to permanently delete your account.
+            {$_(
+                'Una vez que tu cuenta sea eliminada, todos sus recursos y datos se eliminarán permanentemente. Por favor, ingresa tu contraseña para confirmar que deseas eliminar permanentemente tu cuenta.',
+            )}
         </Dialog.Description>
 
         <form onsubmit={deleteUser} class="flex flex-col gap-4">
             <div class="flex flex-col gap-2">
-                <Label for="password">Password</Label>
+                <Label for="password">{$_('Contraseña')}</Label>
 
                 <Input
                     id="password"
@@ -111,7 +112,7 @@
 
             <div class="flex justify-end">
                 <Button type="button" variant="outline" onclick={closeModal}>
-                    Cancel
+                    {$_('Cancelar')}
                 </Button>
 
                 <Button
@@ -123,7 +124,7 @@
                     {#if $form.processing}
                         <Loader2 class="mr-2 size-4 animate-spin" />
                     {/if}
-                    Delete Account
+                    {$_('Eliminar cuenta')}
                 </Button>
             </div>
         </form>

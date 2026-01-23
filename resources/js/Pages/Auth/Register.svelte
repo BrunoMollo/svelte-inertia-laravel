@@ -4,6 +4,7 @@
     import { Label } from '$lib/components/ui/label';
     import AuthenticationLayout from '$lib/layouts/AuthenticationLayout.svelte';
     import { Link, useForm } from '@inertiajs/svelte';
+    import { _ } from '$lib/i18n';
     import ErrorFeedback from '$lib/components/ui/custom/error-feedback.svelte';
     import { onMount } from 'svelte';
 
@@ -35,29 +36,31 @@
 </script>
 
 <svelte:head>
-    <title>Register</title>
+    <title>{$_('Registrar cuenta')}</title>
 </svelte:head>
 
 {#if isRegisterEnabled}
     <AuthenticationLayout>
         <form class="flex flex-col gap-6" onsubmit={submit}>
             <div class="flex flex-col items-center gap-2 text-center">
-                <h1 class="text-2xl font-bold">Register your account</h1>
+                <h1 class="text-2xl font-bold">{$_('Registrar tu cuenta')}</h1>
                 <p class="text-balance text-sm text-muted-foreground">
-                    Enter your email below to register to your account
+                    {$_(
+                        'Ingresa tu correo electrónico para registrar tu cuenta',
+                    )}
                 </p>
             </div>
 
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="name">Name</Label>
+                    <Label for="name">{$_('Nombre')}</Label>
                     <Input
                         id="name"
                         type="text"
                         name="name"
                         bind:value={$form.name}
                         autocomplete="username"
-                        placeholder="Enter your name"
+                        placeholder={$_('Ingresa tu nombre')}
                         required
                         autofocus
                     />
@@ -67,7 +70,7 @@
 
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="email">Email</Label>
+                    <Label for="email">{$_('Correo electrónico')}</Label>
                     <Input
                         id="email"
                         type="email"
@@ -82,7 +85,7 @@
 
                 <div class="grid gap-2">
                     <div class="flex items-center">
-                        <Label for="password">Password</Label>
+                        <Label for="password">{$_('Contraseña')}</Label>
                     </div>
                     <Input
                         id="password"
@@ -99,7 +102,7 @@
                 <div class="grid gap-2">
                     <div class="flex items-center">
                         <Label for="password_confirmation"
-                            >Confirm Password</Label
+                            >{$_('Confirmar contraseña')}</Label
                         >
                     </div>
                     <Input
@@ -121,17 +124,17 @@
                     class="w-full"
                     disabled={$form.processing}
                 >
-                    Register
+                    {$_('Registrarse')}
                 </Button>
             </div>
 
             <div class="flex justify-center gap-1 text-sm">
-                Already have an account?
+                {$_('¿Ya tienes cuenta?')}
                 <Link
                     href={route('login')}
                     class="underline underline-offset-4"
                 >
-                    Log in
+                    {$_('Iniciar sesión')}
                 </Link>
             </div>
         </form>

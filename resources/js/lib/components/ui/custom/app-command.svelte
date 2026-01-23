@@ -17,6 +17,7 @@
         Moon,
         Sun,
     } from '@lucide/svelte';
+    import { _ } from 'svelte-i18n';
     import { onMount } from 'svelte';
     import { setMode } from 'mode-watcher';
 
@@ -28,17 +29,17 @@
 
     const navigationItems: NavigationItem[] = [
         {
-            title: 'Dashboard',
+            title: $_('app_command.dashboard'),
             href: '/dashboard',
             icon: LayoutDashboard,
         },
         {
-            title: 'Profile',
+            title: $_('app_command.profile'),
             href: '/account/profile',
             icon: BadgeCheck,
         },
         {
-            title: 'Security',
+            title: $_('app_command.security'),
             href: '/account/security',
             icon: Lock,
         },
@@ -71,10 +72,10 @@
 
 <CommandDialog bind:open={isOpen}>
     <Command>
-        <CommandInput placeholder="Search commands..." />
+        <CommandInput placeholder={$_('app_command.search_placeholder')} />
         <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Go to...">
+            <CommandEmpty>{$_('app_command.no_results')}</CommandEmpty>
+            <CommandGroup heading={$_('app_command.go_to_heading')}>
                 {#each navigationItems as item}
                     <CommandItem onSelect={() => goToRoute(item.href)}>
                         <item.icon />
@@ -83,14 +84,14 @@
                 {/each}
             </CommandGroup>
             <CommandSeparator />
-            <CommandGroup heading="Theme">
+            <CommandGroup heading={$_('app_command.theme_heading')}>
                 <CommandItem onSelect={() => setTheme('dark')}>
                     <Moon />
-                    <span>Dark Mode</span>
+                    <span>{$_('app_command.dark_mode')}</span>
                 </CommandItem>
                 <CommandItem onSelect={() => setTheme('light')}>
                     <Sun />
-                    <span>Light Mode</span>
+                    <span>{$_('app_command.light_mode')}</span>
                 </CommandItem>
             </CommandGroup>
         </CommandList>

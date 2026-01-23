@@ -3,6 +3,7 @@
     import * as Collapsible from '$lib/components/ui/collapsible';
     import * as Sidebar from '$lib/components/ui/sidebar';
     import { Link } from '@inertiajs/svelte';
+    import { _ } from 'svelte-i18n';
 
     interface NavMainProps {
         items: {
@@ -21,7 +22,7 @@
 </script>
 
 <Sidebar.Group>
-    <Sidebar.GroupLabel>Platform</Sidebar.GroupLabel>
+    <Sidebar.GroupLabel>{$_('Plataforma')}</Sidebar.GroupLabel>
     <Sidebar.Menu>
         {#each items as mainItem}
             <Collapsible.Root open={false} class="group/collapsible">

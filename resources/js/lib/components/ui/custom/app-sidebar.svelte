@@ -14,6 +14,7 @@
     import * as Sidebar from '$lib/components/ui/sidebar';
     import ProjectSwitcher from './project-switcher.svelte';
     import { page } from '@inertiajs/svelte';
+    import { _ } from '$lib/i18n';
 
     type Project = {
         logo: typeof Icon;
@@ -24,8 +25,8 @@
     const projects: Project[] = [
         {
             logo: Shell,
-            title: 'Starter',
-            subtitle: 'Svelte - Inertia - Laravel',
+            title: $_('Starter'),
+            subtitle: $_('Svelte - Inertia - Laravel'),
         },
     ];
 
@@ -47,7 +48,7 @@
     const navMain: MainNavigationItem[] = $derived.by(() => {
         const items: MainNavigationItem[] = [
             {
-                title: 'Dashboard',
+                title: $_('Dashboard'),
                 url: '/dashboard',
                 icon: LayoutDashboard,
             },
@@ -55,7 +56,7 @@
 
         if (isSuperadmin) {
             items.push({
-                title: 'Users',
+                title: $_('Users'),
                 url: '/superadmin/users',
                 icon: Users,
             });
@@ -72,12 +73,12 @@
 
     const navSecondary: SecondaryNavigationItem[] = [
         {
-            title: 'Support',
+            title: $_('Support'),
             url: '/dashboard',
             icon: LifeBuoy,
         },
         {
-            title: 'Feedback',
+            title: $_('Feedback'),
             url: '/dashboard',
             icon: Send,
         },

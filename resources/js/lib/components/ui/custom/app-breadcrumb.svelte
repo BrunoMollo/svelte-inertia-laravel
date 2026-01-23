@@ -1,6 +1,7 @@
 <script lang="ts">
     import * as Breadcrumb from '$lib/components/ui/breadcrumb';
     import { page } from '@inertiajs/svelte';
+    import { _ } from '$lib/i18n';
 
     // Remove query parameters and trailing slash
     let pathWithoutQuery = $derived($page.url.split('?')[0]);
@@ -23,7 +24,7 @@
                       url: path,
                   };
               })
-            : [{ title: 'Dashboard' }],
+            : [{ title: $_('breadcrumb.dashboard') }],
     );
 </script>
 

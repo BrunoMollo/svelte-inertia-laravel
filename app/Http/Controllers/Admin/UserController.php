@@ -82,7 +82,7 @@ class UserController extends Controller
 
         return redirect()
             ->route('superadmin.users.index')
-            ->with('success', __('User created successfully. An invitation email has been sent.'));
+            ->with('success', __('messages.user_created'));
     }
 
     public function edit(User $user): Response
@@ -106,7 +106,7 @@ class UserController extends Controller
 
         return redirect()
             ->route('superadmin.users.index')
-            ->with('success', __('User updated successfully.'));
+            ->with('success', __('messages.user_updated'));
     }
 
     public function destroy(User $user): RedirectResponse
@@ -117,7 +117,7 @@ class UserController extends Controller
 
         return redirect()
             ->route('superadmin.users.index')
-            ->with('success', __('User deleted successfully.'));
+            ->with('success', __('messages.user_deleted'));
     }
 
     public function toggleStatus(User $user): RedirectResponse
@@ -126,10 +126,10 @@ class UserController extends Controller
 
         if ($user->isDisabled()) {
             $user->enable();
-            $message = __('User enabled successfully.');
+            $message = __('messages.user_enabled');
         } else {
             $user->disable();
-            $message = __('User disabled successfully.');
+            $message = __('messages.user_disabled');
         }
 
         return redirect()
@@ -145,6 +145,6 @@ class UserController extends Controller
 
         return redirect()
             ->route('superadmin.users.index')
-            ->with('success', __('Password reset email sent successfully.'));
+            ->with('success', __('messages.password_reset_sent'));
     }
 }

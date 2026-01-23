@@ -2,6 +2,7 @@
     import { Button } from '$lib/components/ui/button';
     import AuthenticationLayout from '$lib/layouts/AuthenticationLayout.svelte';
     import { Link, useForm } from '@inertiajs/svelte';
+    import { _ } from '$lib/i18n';
 
     type Props = {
         status?: string;
@@ -18,17 +19,19 @@
 </script>
 
 <svelte:head>
-    <title>Verify Email</title>
+    <title>{$_('Verificar correo electrónico')}</title>
 </svelte:head>
 
 <AuthenticationLayout>
     <form class="flex flex-col gap-6" onsubmit={submit}>
         <div class="flex flex-col items-center gap-4 text-center">
-            <h1 class="text-2xl font-bold">Verify your email</h1>
+            <h1 class="text-2xl font-bold">
+                {$_('Verifica tu correo electrónico')}
+            </h1>
             <p class="text-balance text-sm text-muted-foreground">
-                Please verify your email address by clicking the link in the
-                email we sent you. If you haven't received it, we can send a new
-                verification link.
+                {$_(
+                    'Por favor, verifica tu correo electrónico haciendo clic en el enlace que te enviamos. Si no lo has recibido, podemos enviar un nuevo enlace de verificación.',
+                )}
             </p>
         </div>
 
@@ -36,13 +39,15 @@
             <div
                 class="text-center text-sm font-medium text-green-600 dark:text-green-400"
             >
-                A new verification link has been sent to your email address.
+                {$_(
+                    'Se ha enviado un nuevo enlace de verificación a tu correo electrónico.',
+                )}
             </div>
         {/if}
 
         <div class="grid gap-6">
             <Button type="submit" class="w-full" disabled={$form.processing}>
-                Resend verification link
+                {$_('Reenviar enlace de verificación')}
             </Button>
 
             <div class="text-center text-sm">
@@ -52,7 +57,7 @@
                     as="button"
                     class="underline underline-offset-4"
                 >
-                    Log out
+                    {$_('Cerrar sesión')}
                 </Link>
             </div>
         </div>

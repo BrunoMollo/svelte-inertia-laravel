@@ -7,7 +7,11 @@
         class?: string;
     };
 
-    let { placeholder = 'Select an option', children, class: className }: Props = $props();
+    let {
+        placeholder = 'Select an option',
+        children,
+        class: className,
+    }: Props = $props();
 </script>
 
 <span data-slot="select-value" class={className}>

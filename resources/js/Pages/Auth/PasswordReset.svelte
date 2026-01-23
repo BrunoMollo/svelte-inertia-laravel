@@ -4,6 +4,7 @@
     import { Label } from '$lib/components/ui/label';
     import AuthenticationLayout from '$lib/layouts/AuthenticationLayout.svelte';
     import { useForm } from '@inertiajs/svelte';
+    import { _ } from '$lib/i18n';
     import ErrorFeedback from '$lib/components/ui/custom/error-feedback.svelte';
 
     type Props = {
@@ -31,16 +32,17 @@
 </script>
 
 <svelte:head>
-    <title>Reset Password</title>
+    <title>{$_('Restablecer contraseña')}</title>
 </svelte:head>
 
 <AuthenticationLayout>
     <form class="flex flex-col gap-6" onsubmit={submit}>
         <div class="flex flex-col items-center gap-4 text-center">
-            <h1 class="text-2xl font-bold">Reset your password</h1>
+            <h1 class="text-2xl font-bold">{$_('Restablecer contraseña')}</h1>
             <p class="text-balance text-sm text-muted-foreground">
-                Please enter your new password below to reset your account
-                password.
+                {$_(
+                    'Por favor, ingresa tu nueva contraseña a continuación para restablecer la contraseña de tu cuenta.',
+                )}
             </p>
         </div>
 
@@ -48,7 +50,7 @@
 
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">Email</Label>
+                <Label for="email">{$_('Correo electrónico')}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -63,7 +65,7 @@
             </div>
 
             <div class="grid gap-2">
-                <Label for="password">New Password</Label>
+                <Label for="password">{$_('Nueva contraseña')}</Label>
                 <Input
                     id="password"
                     type="password"
@@ -77,7 +79,9 @@
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation">Confirm New Password</Label>
+                <Label for="password_confirmation"
+                    >{$_('Confirmar nueva contraseña')}</Label
+                >
                 <Input
                     id="password_confirmation"
                     type="password"
@@ -91,13 +95,13 @@
             </div>
 
             <Button type="submit" class="w-full" disabled={$form.processing}>
-                Reset Password
+                {$_('Restablecer contraseña')}
             </Button>
 
             <div class="text-center text-sm">
-                Remember your password?{' '}
+                {$_('¿Recuerdas tu contraseña?')}
                 <a href={route('login')} class="underline underline-offset-4">
-                    Log in
+                    {$_('Iniciar sesión')}
                 </a>
             </div>
         </div>

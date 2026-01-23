@@ -9,6 +9,7 @@
     import { useForm } from '@inertiajs/svelte';
     import { ArrowLeft, Loader2 } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
+    import { _ } from '$lib/i18n';
 
     type Props = {
         roles: Role[];
@@ -27,17 +28,17 @@
 
         $form.post(route('superadmin.users.store'), {
             onSuccess: () => {
-                toast.success('User created successfully');
+                toast.success($_('Usuario creado exitosamente'));
             },
             onError: () => {
-                toast.error('Failed to create user');
+                toast.error($_('Error al crear el usuario'));
             },
         });
     }
 </script>
 
 <svelte:head>
-    <title>Create User</title>
+    <title>{$_('Crear usuario')}</title>
 </svelte:head>
 
 <AuthenticatedLayout>
@@ -45,53 +46,58 @@
         <div class="mb-6">
             <Button variant="ghost" href={route('superadmin.users.index')}>
                 <ArrowLeft class="mr-2 size-4" />
-                Back to Users
+                {$_('Volver a usuarios')}
             </Button>
         </div>
 
         <div class="rounded-lg border p-6">
             <div class="mb-6">
-                <h1 class="text-2xl font-semibold">Create User</h1>
+                <h1 class="text-2xl font-semibold">{$_('Crear usuario')}</h1>
                 <p class="text-muted-foreground text-sm">
-                    Add a new user to the system. They will receive an email
-                    invitation to set their password.
+                    {$_(
+                        'Añade un nuevo usuario al sistema. Recibirá un correo de invitación para establecer su contraseña.',
+                    )}
                 </p>
             </div>
 
             <form onsubmit={submit} class="space-y-6">
                 <div class="space-y-2">
-                    <Label for="name">Name</Label>
+                    <Label for="name">{$_('Nombre')}</Label>
                     <Input
                         id="name"
                         type="text"
                         bind:value={$form.name}
-                        placeholder="Enter full name"
+                        placeholder={$_('Ingresa el nombre completo')}
                         required
                     />
                     <ErrorFeedback message={$form.errors.name} />
                 </div>
 
                 <div class="space-y-2">
-                    <Label for="email">Email</Label>
+                    <Label for="email">{$_('Correo electrónico')}</Label>
                     <Input
                         id="email"
                         type="email"
                         bind:value={$form.email}
-                        placeholder="Enter email address"
+                        placeholder={$_(
+                            'Ingresa la dirección de correo electrónico',
+                        )}
                         required
                     />
                     <ErrorFeedback message={$form.errors.email} />
                 </div>
 
                 <div class="space-y-2">
-                    <Label for="role">Role</Label>
+                    <Label for="role">{$_('Rol')}</Label>
                     <Select.Root
                         type="single"
                         value={$form.role}
                         onValueChange={(v) => ($form.role = v ?? '')}
                     >
                         <Select.Trigger class="w-full">
-                            <Select.Value placeholder="Select a role" />
+                            <Select.Value
+                                placeholder={$_('Selecciona un rol')}
+                            />
                         </Select.Trigger>
                         <Select.Content>
                             {#each roles as role (role.id)}
@@ -110,13 +116,13 @@
                         type="button"
                         href={route('superadmin.users.index')}
                     >
-                        Cancel
+                        {$_('Cancelar')}
                     </Button>
                     <Button type="submit" disabled={$form.processing}>
                         {#if $form.processing}
                             <Loader2 class="mr-2 size-4 animate-spin" />
                         {/if}
-                        Create User
+                        {$_('Crear usuario')}
                     </Button>
                 </div>
             </form>

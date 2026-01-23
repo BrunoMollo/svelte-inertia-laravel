@@ -25,8 +25,8 @@
     const projects: Project[] = [
         {
             logo: Shell,
-            title: $_('Starter'),
-            subtitle: $_('Svelte - Inertia - Laravel'),
+            title: 'Starter',
+            subtitle: 'Svelte - Inertia - Laravel',
         },
     ];
 
@@ -48,7 +48,7 @@
     const navMain: MainNavigationItem[] = $derived.by(() => {
         const items: MainNavigationItem[] = [
             {
-                title: $_('Dashboard'),
+                title: 'Dashboard',
                 url: '/dashboard',
                 icon: LayoutDashboard,
             },
@@ -56,7 +56,7 @@
 
         if (isSuperadmin) {
             items.push({
-                title: $_('Users'),
+                title: $_('Usuarios'),
                 url: '/superadmin/users',
                 icon: Users,
             });
@@ -73,12 +73,12 @@
 
     const navSecondary: SecondaryNavigationItem[] = [
         {
-            title: $_('Support'),
+            title: $_('Soporte'),
             url: '/dashboard',
             icon: LifeBuoy,
         },
         {
-            title: $_('Feedback'),
+            title: $_('Comentarios'),
             url: '/dashboard',
             icon: Send,
         },

@@ -10,7 +10,6 @@
     } from '$lib/components/ui/sidebar';
     import { Toaster } from '$lib/components/ui/sonner';
     import { ModeWatcher } from 'mode-watcher';
-    import { _ } from '$lib/i18n';
 </script>
 
 <ModeWatcher />

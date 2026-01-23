@@ -60,7 +60,7 @@ class SetLocale
             $lang = explode('-', $lang)[0];
             $lang = strtolower(trim($lang));
 
-            if (!empty($lang)) {
+            if (! empty($lang)) {
                 return $lang;
             }
         }

@@ -11,26 +11,34 @@
     let selectedLocale = $state<{ value: string; label: string } | undefined>();
 
     $effect(() => {
-        selectedLocale = locales.find(l => l.value === $locale);
+        selectedLocale = locales.find((l) => l.value === $locale);
     });
 
     function handleChange() {
         if (!selectedLocale) return;
 
-        router.post(route('user.locale.update'), { locale: selectedLocale.value }, {
-            preserveState: true,
-            onSuccess: () => {
-                locale.set(selectedLocale!.value);
-                window.location.reload();
-            }
-        });
+        router.post(
+            route('user.locale.update'),
+            { locale: selectedLocale.value },
+            {
+                preserveState: true,
+                onSuccess: () => {
+                    locale.set(selectedLocale!.value);
+                    window.location.reload();
+                },
+            },
+        );
     }
 </script>
 
-<Select.Root {value: selectedLocale?.value} onValueChange={(v) => {
-    selectedLocale = locales.find(l => l.value === v);
-    handleChange();
-}}>
+<Select.Root
+    type="single"
+    value={selectedLocale?.value}
+    onValueChange={(v) => {
+        selectedLocale = locales.find((l) => l.value === v);
+        handleChange();
+    }}
+>
     <Select.Trigger class="w-[130px]">
         <Select.Value />
     </Select.Trigger>

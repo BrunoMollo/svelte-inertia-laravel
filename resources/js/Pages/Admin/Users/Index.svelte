@@ -21,7 +21,7 @@
     } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
     import { untrack } from 'svelte';
-    import { _ } from '$lib/i18n';
+    import { _, translateRole } from '$lib/i18n';
 
     type Props = {
         users: PaginatedData<User>;
@@ -222,7 +222,9 @@
                 <Select.Content>
                     <Select.Item value="">{$_('Todos los roles')}</Select.Item>
                     {#each roles as role (role.id)}
-                        <Select.Item value={role.name}>{role.name}</Select.Item>
+                        <Select.Item value={role.name}
+                            >{$translateRole(role.name)}</Select.Item
+                        >
                     {/each}
                 </Select.Content>
             </Select.Root>
@@ -283,7 +285,7 @@
                             <Table.Cell>
                                 {#if user.roles && user.roles.length > 0}
                                     <Badge variant="secondary">
-                                        {user.roles[0].name}
+                                        {$translateRole(user.roles[0].name)}
                                     </Badge>
                                 {:else}
                                     <span class="text-muted-foreground">-</span>

@@ -9,7 +9,7 @@
     import { useForm } from '@inertiajs/svelte';
     import { ArrowLeft, Loader2 } from '@lucide/svelte';
     import { toast } from 'svelte-sonner';
-    import { _ } from '$lib/i18n';
+    import { _, translateRole } from '$lib/i18n';
 
     type Props = {
         roles: Role[];
@@ -102,7 +102,7 @@
                         <Select.Content>
                             {#each roles as role (role.id)}
                                 <Select.Item value={role.name}>
-                                    {role.name}
+                                    {$translateRole(role.name)}
                                 </Select.Item>
                             {/each}
                         </Select.Content>

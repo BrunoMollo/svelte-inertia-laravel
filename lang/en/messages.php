@@ -7,6 +7,7 @@ return [
     'Usuario habilitado correctamente.' => 'User enabled successfully.',
     'Usuario deshabilitado correctamente.' => 'User disabled successfully.',
     'Correo de restablecimiento de contraseña enviado correctamente.' => 'Password reset email sent successfully.',
+    'Contraseña restablecida exitosamente' => 'Password reset successfully',
     'No puedes cerrar la sesión actual.' => 'Cannot terminate current session.',
     'Sesión no encontrada o no te pertenece.' => 'Session not found or does not belong to you.',
 ];

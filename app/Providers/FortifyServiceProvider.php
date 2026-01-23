@@ -7,6 +7,7 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use App\Http\Responses\LoginResponse as CustomLoginResponse;
+use App\Http\Responses\PasswordResetResponse as CustomPasswordResetResponse;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -44,5 +45,6 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
         $this->app->singleton(\Laravel\Fortify\Contracts\LoginResponse::class, CustomLoginResponse::class);
+        $this->app->singleton(\Laravel\Fortify\Contracts\PasswordResetResponse::class, CustomPasswordResetResponse::class);
     }
 }

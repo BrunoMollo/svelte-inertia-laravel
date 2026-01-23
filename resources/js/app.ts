@@ -2,6 +2,7 @@ import '../css/app.css';
 import './bootstrap';
 
 import { initI18n } from '$lib/i18n';
+import { initFlashMessages } from '$lib/flash-messages';
 import { createInertiaApp, type ResolvedComponent } from '@inertiajs/svelte';
 import { mount } from 'svelte';
 
@@ -19,6 +20,9 @@ createInertiaApp({
         if (locale) {
             initI18n(locale);
         }
+
+        // Initialize flash messages handler
+        initFlashMessages();
 
         mount(App, { target: el!, props });
     },

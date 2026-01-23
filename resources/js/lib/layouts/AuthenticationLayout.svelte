@@ -2,6 +2,8 @@
     import { Link } from '@inertiajs/svelte';
     import { Command } from '@lucide/svelte';
     import { _ } from '$lib/i18n';
+    import { Toaster } from '$lib/components/ui/sonner';
+    import { ModeWatcher } from 'mode-watcher';
     import type { Snippet } from 'svelte';
 
     type Props = {
@@ -11,6 +13,7 @@
     let { children }: Props = $props();
 </script>
 
+<ModeWatcher />
 <div class="grid min-h-svh">
     <div class="flex flex-col gap-4 bg-background p-6 md:p-10">
         <div class="flex justify-center gap-2 md:justify-start">
@@ -20,7 +23,6 @@
                 >
                     <Command class="size-4" />
                 </div>
-                {$_('layout.authentication.brand')}
             </Link>
         </div>
         <div class="flex flex-1 items-center justify-center">
@@ -30,3 +32,4 @@
         </div>
     </div>
 </div>
+<Toaster position="top-right" />

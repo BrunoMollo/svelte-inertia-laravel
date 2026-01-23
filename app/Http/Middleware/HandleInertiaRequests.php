@@ -38,6 +38,12 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user ? $user->load('roles') : null,
             ],
             'locale' => $user?->locale ?? app()->getLocale(),
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'info' => fn () => $request->session()->get('info'),
+                'warning' => fn () => $request->session()->get('warning'),
+            ],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'user_created' => 'El usuario se creó correctamente y se envió un correo electrónico de invitación.',
-    'user_updated' => 'Usuario actualizado correctamente.',
-    'user_deleted' => 'Usuario eliminado correctamente.',
-    'user_enabled' => 'Usuario habilitado correctamente.',
-    'user_disabled' => 'Usuario deshabilitado correctamente.',
-    'password_reset_sent' => 'Correo de restablecimiento de contraseña enviado correctamente.',
-    'cannot_terminate_current_session' => 'No puedes cerrar la sesión actual.',
-    'session_not_found' => 'Sesión no encontrada o no te pertenece.',
+    'El usuario se creó correctamente y se envió un correo electrónico de invitación.' => 'El usuario se creó correctamente y se envió un correo electrónico de invitación.',
+    'Usuario actualizado correctamente.' => 'Usuario actualizado correctamente.',
+    'Usuario eliminado correctamente.' => 'Usuario eliminado correctamente.',
+    'Usuario habilitado correctamente.' => 'Usuario habilitado correctamente.',
+    'Usuario deshabilitado correctamente.' => 'Usuario deshabilitado correctamente.',
+    'Correo de restablecimiento de contraseña enviado correctamente.' => 'Correo de restablecimiento de contraseña enviado correctamente.',
+    'No puedes cerrar la sesión actual.' => 'No puedes cerrar la sesión actual.',
+    'Sesión no encontrada o no te pertenece.' => 'Sesión no encontrada o no te pertenece.',
 ];

@@ -82,7 +82,7 @@ class UserController extends Controller
 
         return redirect()
             ->route('superadmin.users.index')
-            ->with('success', __('messages.user_created'));
+            ->with('success', __('El usuario se creó correctamente y se envió un correo electrónico de invitación.'));
     }
 
     public function edit(User $user): Response
@@ -106,7 +106,7 @@ class UserController extends Controller
 
         return redirect()
             ->route('superadmin.users.index')
-            ->with('success', __('messages.user_updated'));
+            ->with('success', __('Usuario actualizado correctamente.'));
     }
 
     public function destroy(User $user): RedirectResponse
@@ -117,7 +117,7 @@ class UserController extends Controller
 
         return redirect()
             ->route('superadmin.users.index')
-            ->with('success', __('messages.user_deleted'));
+            ->with('success', __('Usuario eliminado correctamente.'));
     }
 
     public function toggleStatus(User $user): RedirectResponse
@@ -126,10 +126,10 @@ class UserController extends Controller
 
         if ($user->isDisabled()) {
             $user->enable();
-            $message = __('messages.user_enabled');
+            $message = __('Usuario habilitado correctamente.');
         } else {
             $user->disable();
-            $message = __('messages.user_disabled');
+            $message = __('Usuario deshabilitado correctamente.');
         }
 
         return redirect()
@@ -145,6 +145,6 @@ class UserController extends Controller
 
         return redirect()
             ->route('superadmin.users.index')
-            ->with('success', __('messages.password_reset_sent'));
+            ->with('success', __('Correo de restablecimiento de contraseña enviado correctamente.'));
     }
 }

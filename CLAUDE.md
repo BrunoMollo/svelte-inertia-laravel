@@ -309,6 +309,18 @@ return [
 
 **Important**: Call `$this->setUserLocale()` in the constructor to ensure the subject and body use the correct locale.
 
+### Backend Translation Pattern
+
+**All Laravel translation files use Spanish text as keys**, not abstract identifiers:
+
+```php
+// lang/es/messages.php & lang/en/messages.php
+__('Usuario actualizado correctamente.') // NOT __('messages.user_updated')
+__('No puedes cerrar la sesión actual.')  // NOT __('messages.cannot_terminate_current_session')
+```
+
+Translation files: `lang/es/*.php` (Spanish source), `lang/en/*.php` (English translations).
+
 ## Important Development Rules
 
 ### Package Manager

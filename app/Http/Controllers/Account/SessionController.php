@@ -48,7 +48,7 @@ class SessionController extends Controller
         // Don't allow destroying the current session
         if ($id === $request->session()->getId()) {
             throw ValidationException::withMessages([
-                'session' => [__('messages.cannot_terminate_current_session')],
+                'session' => [__('No puedes cerrar la sesión actual.')],
             ]);
         }
 
@@ -60,7 +60,7 @@ class SessionController extends Controller
 
         if (! $session) {
             throw ValidationException::withMessages([
-                'session' => [__('messages.session_not_found')],
+                'session' => [__('Sesión no encontrada o no te pertenece.')],
             ]);
         }
 

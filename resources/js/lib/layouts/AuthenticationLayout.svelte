@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Link } from '@inertiajs/svelte';
     import { Command } from '@lucide/svelte';
+    import { _ } from '$lib/i18n';
     import type { Snippet } from 'svelte';
 
     type Props = {
@@ -19,7 +20,7 @@
                 >
                     <Command class="size-4" />
                 </div>
-                Svelte Inertia Laravel
+                {$_('layout.authentication.brand')}
             </Link>
         </div>
         <div class="flex flex-1 items-center justify-center">

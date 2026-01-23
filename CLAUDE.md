@@ -89,8 +89,8 @@ php artisan test --filter=TestName  # Run specific test
 - **Middleware**: `app/Http/Middleware/` - Including HandleInertiaRequests
 - **Models**: `app/Models/` - Eloquent models (User, Session)
 - **Routes**:
-  - `routes/web.php` - Main application routes
-  - `routes/auth.php` - Authentication routes (loaded via Fortify)
+    - `routes/web.php` - Main application routes
+    - `routes/auth.php` - Authentication routes (loaded via Fortify)
 
 ### Authentication
 
@@ -110,70 +110,246 @@ php artisan test --filter=TestName  # Run specific test
 This project uses **Svelte 5 with Runes**, not Svelte 4. Key differences:
 
 ### Reactivity
+
 ```svelte
 <!-- Use $state instead of let -->
 <script>
-  let count = $state(0);  // Not: let count = 0
+    let count = $state(0); // Not: let count = 0
 </script>
 ```
 
 ### Derived State
+
 ```svelte
 <script>
-  let count = $state(0);
-  const double = $derived(count * 2);  // Not: $: double = count * 2
+    let count = $state(0);
+    const double = $derived(count * 2); // Not: $: double = count * 2
 </script>
 ```
 
 ### Props
+
 ```svelte
 <script>
-  let { title, description = 'default' } = $props();  // Not: export let title
+    let { title, description = 'default' } = $props(); // Not: export let title
 </script>
 ```
 
 ### Events
+
 ```svelte
 <!-- Use onclick, not on:click -->
 <button onclick={() => count++}>Click</button>
 ```
 
 ### Component Events
+
 ```svelte
 <!-- Pass callback props, not createEventDispatcher -->
 <script>
-  let { onSubmit } = $props();
+    let { onSubmit } = $props();
 </script>
+
 <form onsubmit={onSubmit}>...</form>
 ```
 
 ### Snippets (Not Slots)
+
 ```svelte
 <script>
-  let { children, header } = $props();
+    let { children, header } = $props();
 </script>
 
 {@render header?.()}
 {@render children?.()}
 ```
 
+## Internationalization (i18n)
+
+This project uses a custom i18n system for localization. **Spanish is the source language** and English translations are provided.
+
+### Required Pattern for All Components
+
+**ALWAYS use the `$_()` function for user-facing text** in Svelte components:
+
+1. **Import the i18n helper**:
+
+    ```svelte
+    <script>
+        import { _ } from '$lib/i18n';
+    </script>
+    ```
+
+2. **Wrap all visible text with `$_()`** using **Spanish as the parameter**:
+
+    ```svelte
+    <!-- Page titles -->
+    <svelte:head>
+        <title>{$_('Bienvenido')}</title>
+    </svelte:head>
+
+    <!-- Navigation and links -->
+    <a href="/login">{$_('Iniciar sesión')}</a>
+
+    <!-- Buttons and labels -->
+    <button>{$_('Registrarse')}</button>
+    <label>{$_('Nombre de usuario')}</label>
+
+    <!-- Paragraphs and headings -->
+    <h1>{$_('Configuración de cuenta')}</h1>
+    <p>{$_('Tu Landing va aquí')}</p>
+
+    <!-- Form placeholders -->
+    <input placeholder={$_('Ingresa tu email')} />
+    ```
+
+3. **Add English translations** to `resources/js/lib/i18n/locales/en.json`:
+    ```json
+    {
+        "Bienvenido": "Welcome",
+        "Iniciar sesión": "Login",
+        "Registrarse": "Register"
+    }
+    ```
+
+### What to Localize
+
+- Page titles and meta descriptions
+- Navigation text and menu items
+- Button labels and link text
+- Form labels, placeholders, and validation messages
+- Headings, paragraphs, and body text
+- Error messages and notifications
+- Success/info messages
+- Alt text for images
+- ARIA labels for accessibility
+
+### What NOT to Localize
+
+- Code comments
+- Console logs (unless user-facing)
+- Variable names and function names
+- API endpoints or route names
+- Technical identifiers
+- CSS classes
+- Email addresses and URLs (unless part of user-facing text)
+
+### Important Rules
+
+- **Spanish is the KEY**: The Spanish text inside `$_()` serves as both the default text AND the translation key
+- **Natural Spanish**: Write natural, idiomatic Spanish, not literal translations
+- **Consistent terminology**: Use the same Spanish terms across all components
+- **Check for duplicates**: Review `en.json` before adding new translations to avoid duplicates
+- **Keep sorted**: Maintain alphabetical order in translation files for maintainability
+
+### Example Reference
+
+See `resources/js/Pages/Public/Welcome.svelte` for a complete example of a properly localized component.
+
+### svelte-localizer Agent
+
+For batch localization of components, use the specialized agent:
+
+```bash
+# The svelte-localizer agent can help convert existing components
+# It uses Haiku model for cost-effectiveness
+```
+
+**Agent**: `svelte-localizer`
+**Config**: `.claude/agents/svelte-localizer.yaml`
+**Purpose**: Convert hardcoded text in Svelte components to use `$_()` with Spanish keys and add English translations
+
+### Email Localization (Backend)
+
+**Emails are sent in the recipient user's preferred locale**, falling back to `app()->getLocale()`.
+
+- **Translations**: `lang/es/mail.php` (Spanish text), `lang/en/mail.php` (English translations)
+- **Keys are Spanish text**: Like the frontend, use full Spanish text as translation keys (e.g., `'Has sido invitado a :app'`)
+- **User locale**: Users have a `locale` field (nullable) and a `preferredLocale()` method
+- **Usage pattern**: Use the `UsesUserLocale` trait in Mailable classes
+
+Example:
+
+```php
+use App\Mail\Concerns\UsesUserLocale;
+
+class SomeMail extends Mailable
+{
+    use Queueable, SerializesModels, UsesUserLocale;
+
+    public function __construct(public User $user)
+    {
+        $this->setUserLocale(); // Set locale before envelope/content methods
+    }
+
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: __('Has sido invitado a :app', ['app' => $value]),
+        );
+    }
+}
+```
+
+**Translation files**:
+
+```php
+// lang/es/mail.php (Spanish is the source language)
+return [
+    'Has sido invitado a :app' => 'Has sido invitado a :app',
+    // ...
+];
+
+// lang/en/mail.php (English translations)
+return [
+    'Has sido invitado a :app' => 'You have been invited to :app',
+    // ...
+];
+```
+
+**Important**: Call `$this->setUserLocale()` in the constructor to ensure the subject and body use the correct locale.
+
+### Backend Translation Pattern
+
+**All Laravel translation files use Spanish text as keys**, not abstract identifiers:
+
+```php
+// lang/es/messages.php & lang/en/messages.php
+__('Usuario actualizado correctamente.') // NOT __('messages.user_updated')
+__('No puedes cerrar la sesión actual.')  // NOT __('messages.cannot_terminate_current_session')
+```
+
+Translation files: `lang/es/*.php` (Spanish source), `lang/en/*.php` (English translations).
+
 ## Important Development Rules
 
 ### Package Manager
+
 - **ALWAYS use pnpm**, NEVER use npm
 - Install packages: `pnpm add <package>` or `pnpm add -D <package>`
 
 ### Svelte 5
+
 - Use Svelte 5 runes (`$state`, `$derived`, `$effect`, `$props`)
 - Avoid Svelte stores - use runes instead
 - See `.cursor/rules/svelte-5.mdc` for comprehensive migration guide
 
 ### Styling
+
 - Use Tailwind CSS 4 for styling
 - Avoid writing plain CSS unless absolutely necessary
 - Tailwind config is automatic with Vite plugin
 
+### shadcn-svelte Components
+
+To check available shadcn-svelte components and their usage, fetch the components documentation:
+
+```bash
+curl https://www.shadcn-svelte.com/llms.txt
+```
+
 ### Laravel Models
+
 - When creating models, always use `php artisan make:model -mf` (includes migration and factory)
 - Keep factories synchronized with migrations
 - Prefer timestamp columns over booleans (e.g., `activated_at` instead of `is_active`)
@@ -192,6 +368,26 @@ pnpm build              # Ensure build succeeds
 
 Skip validation only for very minor changes (small style fixes). Always validate for feature additions or significant changes.
 
+## Project Scripts & Tools
+
+### Claude Agents
+
+The project has specialized agent configurations for common tasks:
+
+#### shadcn-installer
+
+- **Model**: Haiku (cost-effective for simple tasks)
+- **Purpose**: Non-interactive shadcn-svelte component installation
+- **Config**: `.claude/agents/shadcn-installer.yaml`
+- **Usage**: Install UI components without manual interaction
+
+#### svelte-localizer
+
+- **Model**: Haiku (cost-effective for simple tasks)
+- **Purpose**: Localize Svelte components using the `$_()` pattern
+- **Config**: `.claude/agents/svelte-localizer.yaml`
+- **Usage**: Convert hardcoded text to Spanish `$_()` calls with English translations
+
 ## Routing & Navigation
 
 - **Ziggy** provides Laravel routes to JavaScript: Use `route('route.name')` in Svelte components
@@ -204,6 +400,7 @@ Skip validation only for very minor changes (small style fixes). Always validate
 
 1. Create Svelte component in `resources/js/Pages/FeatureName/PageName.svelte`
 2. Add route in `routes/web.php`:
+
 ```php
 Route::get('/path', function () {
     return Inertia::render('FeatureName/PageName', [
@@ -215,24 +412,26 @@ Route::get('/path', function () {
 ### Inertia Forms
 
 Use Inertia's form helper with Svelte 5:
+
 ```svelte
 <script>
-  import { useForm } from '@inertiajs/svelte';
+    import { useForm } from '@inertiajs/svelte';
 
-  const form = useForm({
-    name: '',
-    email: '',
-  });
+    const form = useForm({
+        name: '',
+        email: '',
+    });
 
-  function submit() {
-    $form.post(route('route.name'));
-  }
+    function submit() {
+        $form.post(route('route.name'));
+    }
 </script>
 ```
 
 ### Shared Props
 
 Global props available to all pages (via HandleInertiaRequests):
+
 - `auth.user` - Current authenticated user
 - `ziggy` - Route helper data
 
@@ -246,11 +445,13 @@ php artisan pail --filter=error  # Filter by level
 ## File Organization
 
 ### Backend
+
 - Controllers should be thin and delegate to Actions when logic grows
 - Keep related functionality grouped (Account/Profile, Account/Security)
 - Use Form Requests for validation
 
 ### Frontend
+
 - Page components in `Pages/`
 - Reusable UI components in `lib/components/ui/`
 - Custom app components in `lib/components/ui/custom/`

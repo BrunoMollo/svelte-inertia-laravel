@@ -91,4 +91,19 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Update the user's locale preference.
+     */
+    public function updateLocale(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'locale' => ['required', 'string', 'in:es,en'],
+        ]);
+
+        $request->user()->update(['locale' => $validated['locale']]);
+        app()->setLocale($validated['locale']);
+
+        return back();
+    }
 }

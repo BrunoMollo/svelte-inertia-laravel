@@ -18,6 +18,7 @@
     import type { PageProps } from '$lib/types';
     import { Link, page } from '@inertiajs/svelte';
     import { setMode } from 'mode-watcher';
+    import { _ } from '$lib/i18n';
 
     let auth = $state($page.props.auth as PageProps['auth']);
     let user = $derived(auth.user);
@@ -93,7 +94,7 @@
                 <DropdownMenu.Group>
                     <DropdownMenu.Item disabled>
                         <Sparkles />
-                        Upgrade to Pro
+                        {$_('nav.user.upgrade_to_pro')}
                     </DropdownMenu.Item>
                 </DropdownMenu.Group>
                 <DropdownMenu.Separator />
@@ -102,7 +103,7 @@
                         {#snippet child({ props })}
                             <Link {...props} href={route('profile.show')}>
                                 <BadgeCheck />
-                                Profile
+                                {$_('nav.user.profile')}
                             </Link>
                         {/snippet}
                     </DropdownMenu.Item>
@@ -110,31 +111,31 @@
                         {#snippet child({ props })}
                             <Link {...props} href={route('security.show')}>
                                 <Lock />
-                                Security
+                                {$_('nav.user.security')}
                             </Link>
                         {/snippet}
                     </DropdownMenu.Item>
                     <DropdownMenu.Item disabled>
                         <CreditCard />
-                        Billing
+                        {$_('nav.user.billing')}
                     </DropdownMenu.Item>
                     <DropdownMenu.Item disabled>
                         <Bell />
-                        Notifications
+                        {$_('nav.user.notifications')}
                     </DropdownMenu.Item>
                     <DropdownMenu.Sub>
                         <DropdownMenu.SubTrigger>
                             <PaintRoller />
-                            <span>Theme</span>
+                            <span>{$_('nav.user.theme')}</span>
                         </DropdownMenu.SubTrigger>
                         <DropdownMenu.SubContent>
                             <DropdownMenu.Item onclick={() => setMode('light')}>
                                 <Sun />
-                                <span>Light</span>
+                                <span>{$_('nav.user.light')}</span>
                             </DropdownMenu.Item>
                             <DropdownMenu.Item onclick={() => setMode('dark')}>
                                 <Moon />
-                                <span>Dark</span>
+                                <span>{$_('nav.user.dark')}</span>
                             </DropdownMenu.Item>
                         </DropdownMenu.SubContent>
                     </DropdownMenu.Sub>
@@ -149,7 +150,7 @@
                             as="button"
                         >
                             <LogOut />
-                            <span>Log out</span>
+                            <span>{$_('nav.user.logout')}</span>
                         </Link>
                     {/snippet}
                 </DropdownMenu.Item>

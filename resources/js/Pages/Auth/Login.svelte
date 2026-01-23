@@ -3,6 +3,7 @@
     import { Input } from '$lib/components/ui/input';
     import { Label } from '$lib/components/ui/label';
     import { Link, useForm } from '@inertiajs/svelte';
+    import { _ } from '$lib/i18n';
     import AuthenticationLayout from '$lib/layouts/AuthenticationLayout.svelte';
     import ErrorFeedback from '$lib/components/ui/custom/error-feedback.svelte';
 
@@ -27,21 +28,21 @@
 </script>
 
 <svelte:head>
-    <title>Login</title>
+    <title>{$_('Iniciar sesión')}</title>
 </svelte:head>
 
 <AuthenticationLayout>
     <form class="flex flex-col gap-6" onsubmit={submit}>
         <div class="flex flex-col items-center gap-2 text-center">
-            <h1 class="text-2xl font-bold">Login to your account</h1>
+            <h1 class="text-2xl font-bold">{$_('Acceder a tu cuenta')}</h1>
             <p class="text-balance text-sm text-muted-foreground">
-                Enter your email below to login to your account
+                {$_('Ingresa tu correo electrónico para acceder a tu cuenta')}
             </p>
         </div>
         <ErrorFeedback message={$form.errors.email} />
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">Email</Label>
+                <Label for="email">{$_('Correo electrónico')}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -54,7 +55,7 @@
                 />
             </div>
             <div class="grid gap-2">
-                <Label for="password">Password</Label>
+                <Label for="password">{$_('Contraseña')}</Label>
                 <Input
                     id="password"
                     type="password"
@@ -66,25 +67,25 @@
                 />
             </div>
             <Button type="submit" class="w-full" disabled={$form.processing}>
-                Login
+                {$_('Ingresar')}
             </Button>
             <div class="text-center text-sm">
                 <Link
                     href={route('auth.forgot-password')}
                     class="underline underline-offset-4"
                 >
-                    Forgot your password?
+                    {$_('¿Olvidaste tu contraseña?')}
                 </Link>
             </div>
         </div>
         {#if isRegisterEnabled}
             <div class="flex justify-center gap-1 text-sm">
-                Don't have an account?
+                {$_('¿No tienes cuenta?')}
                 <Link
                     href={route('register')}
                     class="underline underline-offset-4"
                 >
-                    Sign up
+                    {$_('Registrarse')}
                 </Link>
             </div>
         {/if}

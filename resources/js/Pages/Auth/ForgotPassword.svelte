@@ -4,6 +4,7 @@
     import { Label } from '$lib/components/ui/label';
     import AuthenticationLayout from '$lib/layouts/AuthenticationLayout.svelte';
     import { Link, router, useForm } from '@inertiajs/svelte';
+    import { _ } from '$lib/i18n';
     import ErrorFeedback from '$lib/components/ui/custom/error-feedback.svelte';
 
     type Props = {
@@ -25,16 +26,19 @@
 </script>
 
 <svelte:head>
-    <title>Forgot Password</title>
+    <title>{$_('¿Olvidaste tu contraseña?')}</title>
 </svelte:head>
 
 <AuthenticationLayout>
     <form class="flex flex-col gap-6" onsubmit={submit}>
         <div class="flex flex-col items-center gap-4 text-center">
-            <h1 class="text-2xl font-bold">Forgot your password?</h1>
+            <h1 class="text-2xl font-bold">
+                {$_('¿Olvidaste tu contraseña?')}
+            </h1>
             <p class="text-balance text-sm text-muted-foreground">
-                No problem. Let us know your email address and we will email you
-                a password reset link.
+                {$_(
+                    'Sin problema. Cuéntanos tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.',
+                )}
             </p>
         </div>
 
@@ -50,7 +54,7 @@
 
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">Email</Label>
+                <Label for="email">{$_('Correo electrónico')}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -65,16 +69,16 @@
             </div>
 
             <Button type="submit" class="w-full" disabled={$form.processing}>
-                Send
+                {$_('Enviar')}
             </Button>
 
             <div class="text-center text-sm">
-                Did you remember?{' '}
+                {$_('¿Lo recordaste?')}
                 <Link
                     href={route('login')}
                     class="underline underline-offset-4"
                 >
-                    Log in
+                    {$_('Iniciar sesión')}
                 </Link>
             </div>
         </div>

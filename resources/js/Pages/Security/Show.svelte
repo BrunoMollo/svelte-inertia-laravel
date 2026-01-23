@@ -1,6 +1,7 @@
 <script lang="ts">
     import AuthenticatedLayout from '$lib/layouts/AuthenticatedLayout.svelte';
     import TwoFactorAuthenticationForm from './Partials/TwoFactorAuthenticationForm.svelte';
+    import { _ } from '$lib/i18n';
 
     type Props = {
         isTwoFactorAuthenticationFeatureEnabled: boolean;
@@ -10,7 +11,7 @@
 </script>
 
 <svelte:head>
-    <title>Security</title>
+    <title>{$_('Seguridad')}</title>
 </svelte:head>
 
 <AuthenticatedLayout>

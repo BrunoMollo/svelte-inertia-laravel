@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from '$lib/i18n';
     import AuthenticatedLayout from '$lib/layouts/AuthenticatedLayout.svelte';
     import DeleteUserForm from './Partials/DeleteUserForm.svelte';
     import UpdatePasswordForm from './Partials/UpdatePasswordForm.svelte';
@@ -13,7 +14,7 @@
 </script>
 
 <svelte:head>
-    <title>Profile</title>
+    <title>{$_('Perfil')}</title>
 </svelte:head>
 
 <AuthenticatedLayout>

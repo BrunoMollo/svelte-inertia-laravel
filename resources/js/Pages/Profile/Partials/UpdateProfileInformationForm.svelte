@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { PageProps } from '$lib/types';
+    import { _ } from '$lib/i18n';
     import * as Avatar from '$lib/components/ui/avatar';
     import { Button } from '$lib/components/ui/button';
     import ErrorFeedback from '$lib/components/ui/custom/error-feedback.svelte';
@@ -44,11 +45,11 @@
 
         $form.post(route('profile.update'), {
             onSuccess: () => {
-                toast.success('Profile updated successfully');
+                toast.success($_('Perfil actualizado exitosamente'));
                 clearPhotoFileInput();
             },
             onError: (errors) => {
-                toast.error('Something went wrong', errors);
+                toast.error($_('Algo salió mal'), errors);
             },
         });
     }
@@ -81,11 +82,13 @@
 <section class={className}>
     <header class="flex flex-col gap-2">
         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            Profile Information
+            {$_('Información de perfil')}
         </h2>
 
         <p class="text-sm text-gray-600 dark:text-gray-400">
-            Update your account's profile information and email address.
+            {$_(
+                'Actualiza la información de perfil y la dirección de correo electrónico de tu cuenta.',
+            )}
         </p>
     </header>
 
@@ -134,7 +137,7 @@
         </div>
 
         <div class="col-span-6 sm:col-span-4">
-            <Label for="name">Name</Label>
+            <Label for="name">{$_('Nombre')}</Label>
             <Input
                 id="name"
                 type="text"
@@ -147,7 +150,7 @@
         </div>
 
         <div class="col-span-6 sm:col-span-4">
-            <Label for="email">Email</Label>
+            <Label for="email">{$_('Correo electrónico')}</Label>
             <Input
                 id="email"
                 type="email"
@@ -160,7 +163,9 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <Button type="submit" disabled={$form.processing}>Save</Button>
+            <Button type="submit" disabled={$form.processing}
+                >{$_('Guardar cambios')}</Button
+            >
         </div>
     </form>
 </section>

@@ -6,6 +6,7 @@
     import { Label } from '$lib/components/ui/label';
     import type { Snippet } from 'svelte';
     import axios from 'axios';
+    import { _ } from 'svelte-i18n';
 
     interface ConfirmWithPasswordProps {
         onConfirm: (password: string) => void;
@@ -16,8 +17,10 @@
 
     const {
         onConfirm,
-        title = 'Confirm Password',
-        description = 'For your security, please confirm your password to continue.',
+        title = $_('Confirmar contraseña'),
+        description = $_(
+            'Por su seguridad, confirme su contraseña para continuar.',
+        ),
         children,
     }: ConfirmWithPasswordProps = $props();
 
@@ -49,7 +52,7 @@
             if (axios.isAxiosError(e) && e.response) {
                 error = e.response.data.message;
             } else {
-                error = 'An unexpected error occurred';
+                error = $_('Ocurrió un error inesperado');
             }
         }
     }
@@ -91,7 +94,7 @@
             </p>
 
             <div class="flex flex-col gap-2">
-                <Label for="password">Password</Label>
+                <Label for="password">{$_('Contraseña')}</Label>
                 <Input
                     type="password"
                     id="password"
@@ -105,10 +108,12 @@
         </div>
 
         <Dialog.Footer>
-            <Button variant="outline" onclick={closeModal}>Cancel</Button>
+            <Button variant="outline" onclick={closeModal}
+                >{$_('Cancelar')}</Button
+            >
 
             <Button onclick={confirmPassword} disabled={processing}>
-                Confirm
+                {$_('Confirmar')}
             </Button>
         </Dialog.Footer>
     </Dialog.Content>

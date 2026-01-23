@@ -2,11 +2,12 @@
     import { Button } from '$lib/components/ui/button';
     import AuthenticationLayout from '$lib/layouts/AuthenticationLayout.svelte';
     import { Link } from '@inertiajs/svelte';
+    import { _ } from '$lib/i18n';
     import { MailOpen } from '@lucide/svelte';
 </script>
 
 <svelte:head>
-    <title>Password Reset Link Sent</title>
+    <title>{$_('Enlace de restablecimiento de contraseña enviado')}</title>
 </svelte:head>
 
 <AuthenticationLayout>
@@ -15,26 +16,28 @@
             <div class="rounded-full bg-muted p-3">
                 <MailOpen class="size-6" />
             </div>
-            <h1 class="text-2xl font-bold">Check your email</h1>
+            <h1 class="text-2xl font-bold">{$_('Revisa tu correo')}</h1>
             <p class="text-balance text-sm text-muted-foreground">
-                We have sent a password reset link to your email address. Please
-                check your inbox and follow the instructions to reset your
-                password.
+                {$_(
+                    'Hemos enviado un enlace para restablecer tu contraseña a tu dirección de correo electrónico. Por favor, revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.',
+                )}
             </p>
         </div>
 
         <div class="grid gap-4">
             <Button variant="outline" class="w-full">
-                <Link href={route('login')}>Return to login</Link>
+                <Link href={route('login')}
+                    >{$_('Volver a iniciar sesión')}</Link
+                >
             </Button>
 
             <div class="text-center text-sm">
-                Didn't receive the email?{' '}
+                {$_('¿No recibiste el correo?')}
                 <Link
                     href={route('auth.forgot-password')}
                     class="underline underline-offset-4"
                 >
-                    Try again
+                    {$_('Intenta de nuevo')}
                 </Link>
             </div>
         </div>

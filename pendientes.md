@@ -8,6 +8,9 @@
 - permitir seleccionar cantidad de filas en pagina de listado
 - hacer un dashboard para el superadmin (arreglar navegacion)
 - fix breadcums
+- ver contraseña en login y reset password
+- sacar verificaion cuando contraseña es seteada
+- dont requre auth to verifiy email
 
 - ver tema de multilengueage, poner idioma por defecto en el calude code
 - canonical logs

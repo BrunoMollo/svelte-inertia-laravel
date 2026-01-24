@@ -29,7 +29,7 @@
             <nav class="flex items-center gap-4">
                 {#if auth.user}
                     <Link
-                        href="#"
+                        href={route('superadmin.dashboard')}
                         class="rounded-md text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-hidden focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                     >
                         {$_('Dashboard')}

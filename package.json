@@ -23,6 +23,7 @@
     "dependencies": {
         "@inertiajs/svelte": "^2.3.1",
         "axios": "^1.13.2",
+        "lucide-svelte": "^0.563.0",
         "svelte-i18n": "^4.0.1"
     },
     "devDependencies": {

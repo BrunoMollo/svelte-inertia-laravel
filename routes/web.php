@@ -34,6 +34,20 @@ Route::middleware('auth', 'verified')->group(function () {
         Route::post('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('superadmin.users.reset-password');
     });
 
+    // Student dashboard
+    Route::prefix('student')->middleware('role:student')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('Student/Dashboard');
+        })->name('student.dashboard');
+    });
+
+    // Teacher dashboard
+    Route::prefix('teacher')->middleware('role:teacher')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('Teacher/Dashboard');
+        })->name('teacher.dashboard');
+    });
+
     // Profile
     Route::get('/account/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::patch('/account/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -48,4 +62,4 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::delete('/account/sessions/browser-sessions/{id}', [SessionController::class, 'destroySession'])->name('session.destroySession');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

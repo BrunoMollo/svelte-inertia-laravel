@@ -41,7 +41,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store'])->name('password.confirm');
 
-    Route::get('/verify-email', function () {
+    Route::get('/email/verify', function () {
         return Inertia::render('Auth/VerifyEmail');
     })->name('verification.notice');
 });

@@ -156,5 +156,15 @@
     "Estudiantes Recientes": "Recent Students",
     "Horario de Clases": "Class Schedule",
     "No tienes cursos asignados todavía": "You have no courses assigned yet",
-    "No hay estudiantes inscritos": "No students enrolled"
+    "No hay estudiantes inscritos": "No students enrolled",
+    "Invitación por email": "Email Invitation",
+    "Contraseña manual": "Manual Password",
+    "Selecciona el método para crear el nuevo usuario.": "Select the method to create the new user.",
+    "El usuario recibirá un correo de invitación para establecer su contraseña.": "The user will receive an invitation email to set their password.",
+    "Se generará una contraseña segura que se mostrará una sola vez. El usuario deberá verificar su correo electrónico.": "A secure password will be generated and shown only once. The user must verify their email address.",
+    "La contraseña se muestra a continuación. Cópiala ahora, ya que no podrás verla de nuevo.": "The password is shown below. Copy it now, as you won't be able to see it again.",
+    "Copiar contraseña": "Copy password",
+    "Contraseña copiada al portapapeles": "Password copied to clipboard",
+    "El usuario deberá verificar su correo electrónico antes de poder acceder al sistema.": "The user must verify their email before accessing the system.",
+    "Cerrar": "Close"
 }

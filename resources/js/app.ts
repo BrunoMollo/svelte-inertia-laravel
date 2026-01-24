@@ -1,8 +1,8 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { initI18n } from '$lib/i18n';
 import { initFlashMessages } from '$lib/flash-messages';
+import { initI18n } from '$lib/i18n';
 import { createInertiaApp, type ResolvedComponent } from '@inertiajs/svelte';
 import { mount } from 'svelte';
 

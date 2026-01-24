@@ -1,23 +1,9 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte';
+    import { Select as SelectPrimitive } from 'bits-ui';
 
-    type Props = {
-        placeholder?: string;
-        children?: Snippet;
-        class?: string;
-    };
+    type Props = SelectPrimitive.ValueProps;
 
-    let {
-        placeholder = 'Select an option',
-        children,
-        class: className,
-    }: Props = $props();
+    let { ref = $bindable(null), placeholder, ...restProps }: Props = $props();
 </script>
 
-<span data-slot="select-value" class={className}>
-    {#if children}
-        {@render children()}
-    {:else}
-        <span data-placeholder>{placeholder}</span>
-    {/if}
-</span>
+<SelectPrimitive.Value bind:ref data-slot="select-value" {placeholder} {...restProps} />

@@ -51,38 +51,98 @@ class UserController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(Request $request): Response
     {
         $this->authorize('create', User::class);
 
         return Inertia::render('Admin/Users/Create', [
             'roles' => Role::all(),
+            'mode' => $request->query('mode', 'invitation'),
         ]);
     }
 
-    public function store(StoreUserRequest $request): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse|Response
     {
-        $user = DB::transaction(function () use ($request) {
+        $mode = $request->input('mode', 'invitation');
+
+        if ($mode === 'manual') {
+            return $this->storeWithManualPassword($request);
+        }
+
+        return $this->storeWithInvitation($request);
+    }
+
+    private function storeWithInvitation(StoreUserRequest $request): RedirectResponse
+    {
+        DB::transaction(function () use ($request) {
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => bcrypt(Str::random(32)),
-                'email_verified_at' => now(),
             ]);
 
+            $user->forceFill(['email_verified_at' => now()])->save();
             $user->assignRole($request->role);
 
             $token = Password::broker()->createToken($user);
             $resetUrl = url(route('password.reset', ['token' => $token, 'email' => $user->email], false));
 
             Mail::to($user)->send(new UserInvitationMail($user, $resetUrl));
-
-            return $user;
         });
 
         return redirect()
             ->route('superadmin.users.index')
             ->with('success', __('El usuario se creó correctamente y se envió un correo electrónico de invitación.'));
+    }
+
+    private function storeWithManualPassword(StoreUserRequest $request): Response
+    {
+        $plainPassword = $this->generateSecurePassword();
+
+        $user = DB::transaction(function () use ($request, $plainPassword) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($plainPassword),
+                'email_verified_at' => null,
+            ]);
+
+            $user->assignRole($request->role);
+            $user->sendEmailVerificationNotification();
+
+            return $user;
+        });
+
+        return Inertia::render('Admin/Users/Create', [
+            'roles' => Role::all(),
+            'mode' => 'manual',
+            'generatedPassword' => $plainPassword,
+            'createdUser' => [
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
+        ]);
+    }
+
+    private function generateSecurePassword(int $length = 14): string
+    {
+        $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        $numbers = '0123456789';
+        $symbols = '!@#$%^&*()_+-=';
+
+        $allChars = $uppercase.$lowercase.$numbers.$symbols;
+
+        $password = $uppercase[random_int(0, strlen($uppercase) - 1)]
+            .$lowercase[random_int(0, strlen($lowercase) - 1)]
+            .$numbers[random_int(0, strlen($numbers) - 1)]
+            .$symbols[random_int(0, strlen($symbols) - 1)];
+
+        for ($i = 4; $i < $length; $i++) {
+            $password .= $allChars[random_int(0, strlen($allChars) - 1)];
+        }
+
+        return str_shuffle($password);
     }
 
     public function edit(User $user): Response

@@ -10,4 +10,5 @@ return [
     'Contraseña restablecida exitosamente' => 'Contraseña restablecida exitosamente',
     'No puedes cerrar la sesión actual.' => 'No puedes cerrar la sesión actual.',
     'Sesión no encontrada o no te pertenece.' => 'Sesión no encontrada o no te pertenece.',
+    'La contraseña debe tener al menos 8 caracteres.' => 'La contraseña debe tener al menos 8 caracteres.',
 ];

@@ -1,18 +1,19 @@
 {
-    "enabledPlugins": {
-        "laravel-simplifier@laravel": true
-    },
-    "permissions": {
-        "allow": [
-            "Bash(php artisan:*)",
-            "Bash(curl https://www.shadcn-svelte.com/llms.txt)",
-            "Bash(pnpm dlx shadcn-svelte@latest add:*)",
-            "Bash(./vendor/bin/pint:*)",
-            "Bash(pnpm lint:fix:*)",
-            "Bash(pnpm lint:*)",
-            "Bash(pnpm format:*)",
-            "Bash(pnpm build:*)",
-            "Bash(pnpm test:*)"
-        ]
-    }
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(curl https://www.shadcn-svelte.com/llms.txt)",
+      "Bash(pnpm dlx shadcn-svelte@latest add:*)",
+      "Bash(./vendor/bin/pint:*)",
+      "Bash(pnpm lint:fix:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm format:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm test:*)"
+    ]
+  },
+  "enabledPlugins": {
+    "laravel-simplifier@laravel": true,
+    "frontend-design@claude-plugins-official": true
+  }
 }

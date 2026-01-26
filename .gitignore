@@ -26,3 +26,6 @@ yarn-error.log
 /.zed
 .windsurfrules
 
+# Python virtual environment
+/venv
+
